@@ -34,12 +34,24 @@ const isValidUrl = (url) =>
   url.includes(".supabase.co");
 
 // JWT Supabase selalu dimulai dengan 'eyJ' (base64 dari '{"alg"...')
-const isValidKey = (key) =>
-  key &&
-  key.startsWith("eyJ") &&
-  key.length > 50 &&
-  !key.includes("your-") &&
-  !key.includes("-here");
+const isValidKey = (key) => {
+  if (!key) return false;
+
+  // Legacy Supabase JWT keys
+  if (key.startsWith("eyJ") && key.length > 50) {
+    return !key.includes("your-") && !key.includes("-here");
+  }
+
+  // Supabase new API keys
+  if (
+    key.startsWith("sb_publishable_") ||
+    key.startsWith("sb_secret_")
+  ) {
+    return key.length > 20;
+  }
+
+  return false;
+};
 
 const urlOk  = isValidUrl(SUPABASE_URL);
 const anonOk = isValidKey(SUPABASE_ANON_KEY);

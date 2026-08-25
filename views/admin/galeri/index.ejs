@@ -1,40 +1,156 @@
 <%# views/admin/galeri/index.ejs %>
 
 <% if (flash) { %>
-<div class="alert alert-<%= flash.type === 'success' ? 'success' : 'error' %>">
-  <%= flash.msg %>
-</div>
+  <div class="alert alert-<%= flash.type === 'success' ? 'success' : 'error' %>">
+    <%= flash.msg %>
+  </div>
 <% } %>
 
 <div class="admin-card">
+
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-    <p class="admin-card-title" style="margin:0;">Galeri Foto Desa</p>
-    <a href="/admin/galeri/tambah" class="btn btn-primary" id="btn-tambah-galeri">+ Tambah Foto</a>
+    <p class="admin-card-title" style="margin:0;">
+      Galeri Foto Desa
+    </p>
+
+    <a
+      href="/admin/galeri/tambah"
+      class="btn btn-primary"
+      id="btn-tambah-galeri"
+    >
+      + Tambah Foto
+    </a>
   </div>
 
-  <% if (daftarGaleri.length === 0) { %>
-    <p style="text-align:center; color:#94a3b8; padding:32px 0; font-size:13px;">Belum ada foto di galeri.</p>
+
+  <% if (!daftarGaleri || daftarGaleri.length === 0) { %>
+
+    <p style="text-align:center; color:#94a3b8; padding:32px 0; font-size:13px;">
+      Belum ada foto di galeri.
+    </p>
+
   <% } else { %>
-  <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px;">
-    <% daftarGaleri.forEach(g => { %>
-    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; overflow:hidden;">
-      <% if (g.foto_url) { %>
-        <img src="<%= g.foto_url %>" alt="<%= g.judul %>" style="width:100%; height:140px; object-fit:cover;" />
-      <% } else { %>
-        <div style="width:100%; height:140px; background:#e2e8f0; display:flex; align-items:center; justify-content:center; font-size:32px;">🖼️</div>
-      <% } %>
-      <div style="padding:10px;">
-        <p style="font-size:13px; font-weight:500; color:#1e293b; margin:0 0 4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><%= g.judul %></p>
-        <p style="font-size:11px; color:#94a3b8; margin:0 0 10px;">Urutan: <%= g.urutan %></p>
-        <div style="display:flex; gap:6px;">
-          <a href="/admin/galeri/<%= g.id %>/edit" class="btn btn-secondary btn-sm" style="flex:1; justify-content:center;" id="btn-edit-galeri-<%= g.id %>">Edit</a>
-          <form action="/admin/galeri/<%= g.id %>/hapus" method="POST" onsubmit="return confirm('Hapus foto ini?')">
-            <button type="submit" class="btn btn-danger btn-sm" id="btn-hapus-galeri-<%= g.id %>">🗑</button>
-          </form>
+
+    <div style="
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+      gap:14px;
+    ">
+
+      <% daftarGaleri.forEach(function(g) { %>
+
+        <div style="
+          background:#f8fafc;
+          border:1px solid #e2e8f0;
+          border-radius:10px;
+          overflow:hidden;
+        ">
+
+          <!-- Foto -->
+          <% if (g.foto_url) { %>
+
+            <img
+              src="<%= g.foto_url %>"
+              alt="<%= g.judul || 'Foto galeri' %>"
+              style="
+                width:100%;
+                height:140px;
+                object-fit:cover;
+                display:block;
+              "
+            />
+
+          <% } else { %>
+
+            <div style="
+              width:100%;
+              height:140px;
+              background:#e2e8f0;
+              display:flex;
+              align-items:center;
+              justify-content:center;
+              font-size:32px;
+            ">
+              🖼️
+            </div>
+
+          <% } %>
+
+
+          <!-- Informasi -->
+          <div style="padding:10px;">
+
+            <p style="
+              font-size:13px;
+              font-weight:500;
+              color:#1e293b;
+              margin:0 0 4px;
+              white-space:nowrap;
+              overflow:hidden;
+              text-overflow:ellipsis;
+            ">
+              <%= g.judul || 'Tanpa judul' %>
+            </p>
+
+
+            <p style="
+              font-size:11px;
+              color:#94a3b8;
+              margin:0 0 10px;
+            ">
+              Urutan: <%= g.urutan || 0 %>
+            </p>
+
+
+            <!-- Tombol -->
+            <div style="
+              display:flex;
+              gap:6px;
+              align-items:center;
+            ">
+
+              <!-- Edit -->
+              <a
+                href="/admin/galeri/<%= g.id %>/edit"
+                class="btn btn-secondary btn-sm"
+                style="
+                  flex:1;
+                  justify-content:center;
+                "
+              >
+                Edit
+              </a>
+
+
+              <!-- Hapus -->
+              <form
+                action="/admin/galeri/<%= g.id %>/hapus"
+                method="POST"
+                style="margin:0;"
+                onsubmit="return confirm('Yakin ingin menghapus foto ini? Foto akan dihapus dari galeri dan Supabase Storage.');"
+              >
+
+                <button
+                  type="submit"
+                  class="btn btn-danger btn-sm"
+                  title="Hapus foto"
+                  aria-label="Hapus foto <%= g.judul || '' %>"
+                >
+                  🗑
+                </button>
+
+              </form>
+
+            </div>
+
+          </div>
+
         </div>
-      </div>
+
+      <% }); %>
+
     </div>
-    <% }) %>
-  </div>
+
   <% } %>
+
 </div>

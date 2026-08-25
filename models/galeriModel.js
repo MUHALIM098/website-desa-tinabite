@@ -32,7 +32,7 @@ async function getAllGaleriAdmin() {
   if (!supabaseAdmin) return [];
   const { data, error } = await supabaseAdmin
     .from("galeri")
-    .select("id, judul, foto_url, foto_path, urutan, created_at")
+    .select("id, judul,foto_url, foto_path, kategori, urutan, created_at")
     .order("urutan", { ascending: true })
     .order("created_at", { ascending: false });
   if (error) { console.error("[galeriModel] getAllGaleriAdmin:", error.message); return []; }
