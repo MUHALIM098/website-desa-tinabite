@@ -1,0 +1,43 @@
+<%# views/admin/dashboard.ejs %>
+
+<!-- Stat Cards -->
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-card-icon" style="background:#dcfce7;">📰</div>
+    <div class="stat-card-value"><%= stats.berita %></div>
+    <div class="stat-card-label">Total Berita</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-icon" style="background:#dbeafe;">🖼️</div>
+    <div class="stat-card-value"><%= stats.galeri %></div>
+    <div class="stat-card-label">Foto Galeri</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-icon" style="background:#ede9fe;">🏛️</div>
+    <div class="stat-card-value"><%= stats.perangkat || 0 %></div>
+    <div class="stat-card-label">Perangkat Desa</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-icon" style="background:#fee2e2;">✉️</div>
+    <div class="stat-card-value"><%= stats.kontak %></div>
+    <div class="stat-card-label">Pesan Belum Dibaca</div>
+  </div>
+</div>
+
+<!-- Quick Access -->
+<div class="admin-card">
+  <p class="admin-card-title">Akses Cepat</p>
+  <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px;">
+    <a href="/admin/berita/tambah" class="btn btn-primary">+ Tambah Berita</a>
+    <a href="/admin/galeri/tambah" class="btn btn-primary" style="background:#2563eb;">+ Tambah Foto</a>
+    <a href="/admin/pemerintahan/tambah" class="btn btn-primary" style="background:#7c3aed;">+ Tambah Perangkat</a>
+    <a href="/admin/kontak" class="btn btn-secondary">📬 Lihat Pesan</a>
+  </div>
+</div>
+
+<!-- Info Panel -->
+<div class="admin-card">
+  <p class="admin-card-title">Informasi Panel</p>
+  <p style="font-size:13px; color:#64748b; margin:0 0 8px;">Login sebagai: <strong style="color:#1e293b;"><%= adminEmail %></strong></p>
+  <p style="font-size:13px; color:#64748b; margin:0;">Website Desa Tinabite — Panel admin untuk mengelola konten website secara mandiri.</p>
+</div>

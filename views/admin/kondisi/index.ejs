@@ -1,0 +1,193 @@
+<%# views/admin/kondisi/index.ejs — Kondisi Desa (tab per kategori) %>
+
+<% if (flash) { %>
+<div class="alert alert-<%= flash.type === 'success' ? 'success' : 'error' %>">
+  <%= flash.msg %>
+</div>
+<% } %>
+
+<!-- Tab Navigation -->
+<div style="display:flex; gap:4px; margin-bottom:20px; background:white; border:1px solid #e2e8f0; border-radius:10px; padding:4px; width:fit-content;">
+  <% [['demografi','📍 Demografi'],['keadaan_sosial','🏫 Keadaan Sosial'],['keadaan_ekonomi','🌾 Keadaan Ekonomi']].forEach(([key, label]) => { %>
+  <a href="#tab-<%= key %>" onclick="switchTab('<%= key %>', this)"
+    id="tab-btn-<%= key %>"
+    style="padding:8px 16px; border-radius:8px; font-size:13px; font-weight:500; text-decoration:none; color:#64748b; transition:all 0.15s;"
+    class="tab-btn">
+    <%= label %>
+  </a>
+  <% }) %>
+</div>
+
+<!-- Demografi -->
+<div id="tab-demografi" class="tab-panel">
+  <div class="admin-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <p class="admin-card-title" style="margin:0;">Demografi</p>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <% KONDISI_MAP.demografi.forEach(sub => { %>
+        <a href="/admin/kondisi/tambah?kategori=demografi&sub=<%= sub.key %>" class="btn btn-primary btn-sm" id="btn-tambah-<%= sub.key %>">
+          + <%= sub.label %>
+        </a>
+        <% }) %>
+      </div>
+    </div>
+    <% KONDISI_MAP.demografi.forEach(sub => { %>
+    <% const items = grouped.demografi.filter(d => d.sub_kategori === sub.key); %>
+    <div style="margin-bottom:20px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+        <span style="width:3px; height:18px; background:#22c55e; border-radius:2px; display:inline-block;"></span>
+        <h3 style="font-size:13px; font-weight:600; color:#374151; margin:0;"><%= sub.label %></h3>
+        <span class="badge badge-gray"><%= items.length %> data</span>
+      </div>
+      <% if (items.length === 0) { %>
+        <p style="font-size:12px; color:#94a3b8; padding:8px 12px; background:#f8fafc; border-radius:6px;">Belum ada data. Klik tombol di atas untuk menambahkan.</p>
+      <% } else { %>
+      <table class="admin-table" style="margin-bottom:4px;">
+        <thead><tr><th>Judul</th><th>Nilai</th><th>Konten (Ringkas)</th><th>Urutan</th><th>Aksi</th></tr></thead>
+        <tbody>
+          <% items.forEach(d => { %>
+          <tr>
+            <td style="font-weight:500; color:#1e293b; font-size:13px;"><%= d.judul %></td>
+            <td style="font-size:13px;"><%= d.nilai ? `${d.nilai} ${d.satuan || ''}`.trim() : '—' %></td>
+            <td style="font-size:12px; color:#64748b; max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+              <%= d.konten ? d.konten.substring(0,80) + (d.konten.length > 80 ? '...' : '') : '—' %>
+            </td>
+            <td style="font-size:12px; color:#64748b;"><%= d.urutan %></td>
+            <td>
+              <div style="display:flex; gap:6px;">
+                <a href="/admin/kondisi/<%= d.id %>/edit" class="btn btn-secondary btn-sm" id="btn-edit-kondisi-<%= d.id %>">Edit</a>
+                <form action="/admin/kondisi/<%= d.id %>/hapus" method="POST" onsubmit="return confirm('Hapus data ini?')">
+                  <button type="submit" class="btn btn-danger btn-sm">🗑</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <% } %>
+    </div>
+    <% }) %>
+  </div>
+</div>
+
+<!-- Keadaan Sosial -->
+<div id="tab-keadaan_sosial" class="tab-panel" style="display:none;">
+  <div class="admin-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <p class="admin-card-title" style="margin:0;">Keadaan Sosial</p>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <% KONDISI_MAP.keadaan_sosial.forEach(sub => { %>
+        <a href="/admin/kondisi/tambah?kategori=keadaan_sosial&sub=<%= sub.key %>" class="btn btn-primary btn-sm" style="background:#2563eb;" id="btn-tambah-<%= sub.key %>">
+          + <%= sub.label %>
+        </a>
+        <% }) %>
+      </div>
+    </div>
+    <% KONDISI_MAP.keadaan_sosial.forEach(sub => { %>
+    <% const items = grouped.keadaan_sosial.filter(d => d.sub_kategori === sub.key); %>
+    <div style="margin-bottom:20px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+        <span style="width:3px; height:18px; background:#2563eb; border-radius:2px; display:inline-block;"></span>
+        <h3 style="font-size:13px; font-weight:600; color:#374151; margin:0;"><%= sub.label %></h3>
+        <span class="badge badge-gray"><%= items.length %> data</span>
+      </div>
+      <% if (items.length === 0) { %>
+        <p style="font-size:12px; color:#94a3b8; padding:8px 12px; background:#f8fafc; border-radius:6px;">Belum ada data.</p>
+      <% } else { %>
+      <table class="admin-table">
+        <thead><tr><th>Judul</th><th>Nilai</th><th>Konten (Ringkas)</th><th>Urutan</th><th>Aksi</th></tr></thead>
+        <tbody>
+          <% items.forEach(d => { %>
+          <tr>
+            <td style="font-weight:500; color:#1e293b; font-size:13px;"><%= d.judul %></td>
+            <td style="font-size:13px;"><%= d.nilai ? `${d.nilai} ${d.satuan || ''}`.trim() : '—' %></td>
+            <td style="font-size:12px; color:#64748b; max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+              <%= d.konten ? d.konten.substring(0,80) + (d.konten.length > 80 ? '...' : '') : '—' %>
+            </td>
+            <td style="font-size:12px; color:#64748b;"><%= d.urutan %></td>
+            <td>
+              <div style="display:flex; gap:6px;">
+                <a href="/admin/kondisi/<%= d.id %>/edit" class="btn btn-secondary btn-sm" id="btn-edit-sosial-<%= d.id %>">Edit</a>
+                <form action="/admin/kondisi/<%= d.id %>/hapus" method="POST" onsubmit="return confirm('Hapus data ini?')">
+                  <button type="submit" class="btn btn-danger btn-sm">🗑</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <% } %>
+    </div>
+    <% }) %>
+  </div>
+</div>
+
+<!-- Keadaan Ekonomi -->
+<div id="tab-keadaan_ekonomi" class="tab-panel" style="display:none;">
+  <div class="admin-card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <p class="admin-card-title" style="margin:0;">Keadaan Ekonomi</p>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <% KONDISI_MAP.keadaan_ekonomi.forEach(sub => { %>
+        <a href="/admin/kondisi/tambah?kategori=keadaan_ekonomi&sub=<%= sub.key %>" class="btn btn-primary btn-sm" style="background:#ca8a04;" id="btn-tambah-<%= sub.key %>">
+          + <%= sub.label %>
+        </a>
+        <% }) %>
+      </div>
+    </div>
+    <% KONDISI_MAP.keadaan_ekonomi.forEach(sub => { %>
+    <% const items = grouped.keadaan_ekonomi.filter(d => d.sub_kategori === sub.key); %>
+    <div style="margin-bottom:20px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+        <span style="width:3px; height:18px; background:#ca8a04; border-radius:2px; display:inline-block;"></span>
+        <h3 style="font-size:13px; font-weight:600; color:#374151; margin:0;"><%= sub.label %></h3>
+        <span class="badge badge-gray"><%= items.length %> data</span>
+      </div>
+      <% if (items.length === 0) { %>
+        <p style="font-size:12px; color:#94a3b8; padding:8px 12px; background:#f8fafc; border-radius:6px;">Belum ada data.</p>
+      <% } else { %>
+      <table class="admin-table">
+        <thead><tr><th>Judul</th><th>Nilai</th><th>Konten (Ringkas)</th><th>Urutan</th><th>Aksi</th></tr></thead>
+        <tbody>
+          <% items.forEach(d => { %>
+          <tr>
+            <td style="font-weight:500; color:#1e293b; font-size:13px;"><%= d.judul %></td>
+            <td style="font-size:13px;"><%= d.nilai ? `${d.nilai} ${d.satuan || ''}`.trim() : '—' %></td>
+            <td style="font-size:12px; color:#64748b; max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+              <%= d.konten ? d.konten.substring(0,80) + (d.konten.length > 80 ? '...' : '') : '—' %>
+            </td>
+            <td style="font-size:12px; color:#64748b;"><%= d.urutan %></td>
+            <td>
+              <div style="display:flex; gap:6px;">
+                <a href="/admin/kondisi/<%= d.id %>/edit" class="btn btn-secondary btn-sm" id="btn-edit-ekonomi-<%= d.id %>">Edit</a>
+                <form action="/admin/kondisi/<%= d.id %>/hapus" method="POST" onsubmit="return confirm('Hapus data ini?')">
+                  <button type="submit" class="btn btn-danger btn-sm">🗑</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <% } %>
+    </div>
+    <% }) %>
+  </div>
+</div>
+
+<script>
+function switchTab(key, el) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.style.background = 'transparent'; b.style.color = '#64748b';
+  });
+  document.getElementById('tab-' + key).style.display = 'block';
+  el.style.background = '#f1f5f9'; el.style.color = '#1e293b';
+}
+// Aktifkan tab pertama
+document.addEventListener('DOMContentLoaded', () => {
+  switchTab('demografi', document.getElementById('tab-btn-demografi'));
+});
+</script>

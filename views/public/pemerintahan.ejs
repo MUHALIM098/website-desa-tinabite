@@ -1,0 +1,270 @@
+<%# views/public/pemerintahan.ejs — Org Chart Struktur Pemerintahan Desa %>
+
+<% function hit(jabatan, keys) { var j=(jabatan||"").toLowerCase(); return keys.some(function(k){ return j.indexOf(k.toLowerCase())!==-1; }); } %>
+<% var kepalaDesa=perangkat.find(function(p){ return hit(p.jabatan,["kepala desa"])&&!hit(p.jabatan,["kepala dusun"]); }); %>
+<% var bpd=perangkat.find(function(p){ return hit(p.jabatan,["bpd","badan permusyawaratan"]); }); %>
+<% var lpmd=perangkat.find(function(p){ return hit(p.jabatan,["lpmd","lembaga pemberdayaan"]); }); %>
+<% var sekdes=perangkat.find(function(p){ return hit(p.jabatan,["sekretaris desa","sekdes"]); }); %>
+<% var kasiList=perangkat.filter(function(p){ return hit(p.jabatan,["kasi "," kepala seksi"])&&!hit(p.jabatan,["kepala dusun","kadus"]); }); %>
+<% if(kasiList.length===0){ kasiList=perangkat.filter(function(p){ return hit(p.jabatan,["kasi"])&&!hit(p.jabatan,["kepala dusun","kadus"]); }); } %>
+<% var kaurList=perangkat.filter(function(p){ return hit(p.jabatan,["kaur "," kepala urusan"])&&!hit(p.jabatan,["kepala dusun","kadus"]); }); %>
+<% if(kaurList.length===0){ kaurList=perangkat.filter(function(p){ return hit(p.jabatan,["kaur"])&&!hit(p.jabatan,["kepala dusun","kadus"]); }); } %>
+<% var kepDusun=perangkat.filter(function(p){ return hit(p.jabatan,["kepala dusun","kadus"]); }).sort(function(a,b){ return (a.jabatan||"").localeCompare(b.jabatan||"","id",{numeric:true}); }); %>
+<% var usedIds=[kepalaDesa&&kepalaDesa.id,bpd&&bpd.id,lpmd&&lpmd.id,sekdes&&sekdes.id].concat(kasiList.map(function(p){return p.id;})).concat(kaurList.map(function(p){return p.id;})).concat(kepDusun.map(function(p){return p.id;})).filter(Boolean); %>
+<% var lainnya=perangkat.filter(function(p){ return usedIds.indexOf(p.id)===-1; }); %>
+<% var hasKasi=kasiList.length>0; var hasKaur=kaurList.length>0; var hasDusun=kepDusun.length>0; %>
+
+<section class="bg-gradient-to-r from-primary-700 to-primary-900 text-white py-14 px-4">
+  <div class="max-w-7xl mx-auto">
+    <p class="text-primary-200 text-sm mb-2">&#8592; <a href="/" class="hover:underline">Beranda</a></p>
+    <h1 class="text-3xl md:text-4xl font-bold">Pemerintahan Desa</h1>
+    <p class="text-primary-200 mt-2 text-base">Struktur Organisasi Perangkat <%= desa.nama %></p>
+  </div>
+</section>
+
+<style>
+  .oc-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:4px 4px 56px;}
+  .oc-chart{min-width:720px;display:flex;flex-direction:column;align-items:center;gap:0;padding:0 24px;}
+  .oc-card{background:#fff;border:1.5px solid #d1fae5;border-radius:12px;padding:16px 12px 13px;text-align:center;position:relative;box-shadow:0 3px 12px rgba(21,128,61,.07);transition:transform .17s,box-shadow .17s;flex-shrink:0;}
+  .oc-card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(21,128,61,.13);}
+  .oc-card::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:28px;height:3px;background:#16a34a;border-radius:0 0 3px 3px;}
+  .oc-card.c-kades{width:168px;border:2px solid #15803d;background:linear-gradient(150deg,#f0fdf4,#fff 55%);box-shadow:0 5px 22px rgba(21,128,61,.14);}
+  .oc-card.c-kades::after{width:50px;height:4px;background:linear-gradient(90deg,#14532d,#4ade80);}
+  .oc-card.c-ext{width:118px;border-color:#e2e8f0;box-shadow:0 2px 7px rgba(0,0,0,.05);}
+  .oc-card.c-ext::after{background:#94a3b8;width:22px;}
+  .oc-card.c-sekdes{width:150px;border-color:#93c5fd;background:linear-gradient(150deg,#eff6ff,#fff 55%);}
+  .oc-card.c-sekdes::after{background:#3b82f6;width:36px;}
+  .oc-card.c-kasi{width:128px;}.oc-card.c-kasi::after{background:#d97706;width:30px;}
+  .oc-card.c-kaur{width:128px;border-color:#ddd6fe;}.oc-card.c-kaur::after{background:#7c3aed;width:30px;}
+  .oc-card.c-kadus{width:124px;border-color:#e2e8f0;}.oc-card.c-kadus::after{background:#64748b;width:24px;}
+  .oc-av{width:60px;height:60px;border-radius:50%;object-fit:cover;border:2.5px solid #bbf7d0;display:block;margin:0 auto 9px;}
+  .oc-card.c-kades .oc-av{width:76px;height:76px;border-color:#4ade80;border-width:3px;}
+  .oc-card.c-ext .oc-av{width:50px;height:50px;border-color:#e2e8f0;}
+  .oc-card.c-kadus .oc-av{border-color:#e2e8f0;}
+  .oc-ic{width:60px;height:60px;border-radius:50%;background:#f0fdf4;border:2.5px solid #bbf7d0;display:flex;align-items:center;justify-content:center;margin:0 auto 9px;flex-shrink:0;}
+  .oc-ic svg{width:27px;height:27px;color:#15803d;}
+  .oc-card.c-kades .oc-ic{width:76px;height:76px;background:#dcfce7;border-color:#4ade80;border-width:3px;}
+  .oc-card.c-kades .oc-ic svg{width:40px;height:40px;}
+  .oc-card.c-ext .oc-ic{width:50px;height:50px;background:#f8fafc;border-color:#e2e8f0;}
+  .oc-card.c-ext .oc-ic svg{width:22px;height:22px;color:#94a3b8;}
+  .oc-card.c-kadus .oc-ic{background:#f8fafc;border-color:#e2e8f0;}
+  .oc-card.c-kadus .oc-ic svg{color:#94a3b8;}
+  .oc-card.c-kaur .oc-ic{background:#f5f3ff;border-color:#ddd6fe;}
+  .oc-card.c-kaur .oc-ic svg{color:#7c3aed;}
+  .oc-nm{font-size:11.5px;font-weight:700;color:#1e293b;line-height:1.35;margin-bottom:6px;word-break:break-word;}
+  .oc-card.c-kades .oc-nm{font-size:13px;}.oc-card.c-ext .oc-nm{font-size:11px;}
+  .oc-bg{display:inline-block;font-size:9.5px;font-weight:600;padding:2px 8px;border-radius:99px;line-height:1.5;word-break:break-word;max-width:100%;}
+  .bg-kades{background:#dcfce7;color:#14532d;border:1px solid #86efac;}
+  .bg-sekdes{background:#dbeafe;color:#1e40af;border:1px solid #93c5fd;}
+  .bg-kasi{background:#fef3c7;color:#92400e;border:1px solid #fcd34d;}
+  .bg-kaur{background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd;}
+  .bg-kadus{background:#f1f5f9;color:#475569;border:1px solid #cbd5e1;}
+  .bg-ext{background:#f8fafc;color:#64748b;border:1px solid #e2e8f0;}
+  .cv{width:2px;background:#cbd5e1;flex-shrink:0;margin:0 auto;}
+  .oc-top-row{display:flex;align-items:center;justify-content:center;gap:0;}
+  .top-hline{width:56px;height:2px;background:#cbd5e1;flex-shrink:0;}
+  .oc-kasi-kaur-row{display:flex;align-items:flex-start;justify-content:center;width:100%;}
+  .oc-kasi-group{flex:1;display:flex;justify-content:flex-end;}
+  .oc-kasi-col{display:flex;flex-direction:column;align-items:center;}
+  .oc-kasi-inner{display:flex;gap:10px;align-items:flex-end;border-top:2px solid #cbd5e1;}
+  .oc-kasi-inner.has-right{border-right:2px solid #cbd5e1;}
+  .oc-kaur-group{flex:1;display:flex;justify-content:flex-start;}
+  .oc-kaur-col{display:flex;flex-direction:column;align-items:center;}
+  .oc-kaur-inner{display:flex;gap:10px;align-items:flex-end;border-top:2px solid #cbd5e1;}
+  .oc-kaur-inner.has-left{border-left:2px solid #cbd5e1;}
+  .kw{position:relative;padding-top:24px;flex-shrink:0;}
+  .kw::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:2px;height:24px;background:#cbd5e1;}
+  .grp-lbl{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 11px;border-radius:99px;margin-bottom:6px;white-space:nowrap;}
+  .gl-kasi{background:#fef3c7;color:#92400e;}.gl-kaur{background:#ede9fe;color:#5b21b6;}
+  .oc-kadus-section{display:flex;flex-direction:column;align-items:center;width:100%;}
+  .oc-kadus-label{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#94a3b8;margin-bottom:6px;}
+  .oc-kadus-inner{display:flex;gap:10px;align-items:flex-end;border-top:2px solid #cbd5e1;}
+  .dw{position:relative;padding-top:24px;flex-shrink:0;}
+  .dw::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:2px;height:24px;background:#cbd5e1;}
+  @media(max-width:640px){.oc-wrap{overflow-x:hidden;padding:0 0 40px;}.oc-chart{min-width:unset;width:100%;padding:0 12px;}.oc-top-row{flex-direction:column;align-items:center;}.top-hline{width:2px;height:22px;}.oc-kasi-kaur-row{flex-direction:column;align-items:center;}.oc-kasi-group,.oc-kaur-group{flex:unset;width:100%;justify-content:center;}.oc-kasi-inner{border-right:none!important;flex-wrap:wrap;justify-content:center;}.oc-kaur-inner{border-left:none!important;flex-wrap:wrap;justify-content:center;}.oc-kadus-inner{flex-wrap:wrap;justify-content:center;}.oc-card{width:130px!important;min-width:unset!important;}.oc-card.c-kades{width:150px!important;}}
+  .oc-card-clickable{cursor:pointer;}
+  .oc-card-clickable:focus{outline:2px solid #16a34a;outline-offset:2px;}
+  .oc-click-hint{font-size:9px;color:#94a3b8;margin-top:5px;letter-spacing:.03em;}
+  .oc-card-clickable:hover .oc-click-hint{color:#16a34a;}
+  .profil-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .2s;}
+  .profil-overlay.aktif{opacity:1;pointer-events:auto;}
+  .profil-modal{background:#fff;border-radius:16px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.25);transform:translateY(16px) scale(.97);transition:transform .22s,opacity .22s;opacity:0;}
+  .profil-overlay.aktif .profil-modal{transform:translateY(0) scale(1);opacity:1;}
+  .profil-modal-header{display:flex;align-items:flex-start;gap:16px;padding:24px 24px 16px;border-bottom:1px solid #f1f5f9;position:relative;}
+  .profil-modal-foto{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #d1fae5;flex-shrink:0;}
+  .profil-modal-foto-placeholder{width:80px;height:80px;border-radius:50%;background:#f0fdf4;border:3px solid #d1fae5;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .profil-modal-foto-placeholder svg{width:38px;height:38px;color:#16a34a;}
+  .profil-modal-info{flex:1;min-width:0;}
+  .profil-modal-nama{font-size:17px;font-weight:700;color:#1e293b;margin:0 0 4px;line-height:1.3;}
+  .profil-modal-jabatan{font-size:12px;font-weight:600;padding:3px 10px;border-radius:99px;display:inline-block;margin-bottom:6px;}
+  .profil-modal-motto{font-size:12px;color:#64748b;font-style:italic;line-height:1.4;margin-top:4px;}
+  .profil-modal-close{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:#f1f5f9;border:none;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;color:#64748b;transition:background .15s;flex-shrink:0;}
+  .profil-modal-close:hover{background:#e2e8f0;color:#1e293b;}
+  .profil-modal-body{padding:20px 24px 24px;}
+  .profil-section{margin-bottom:16px;}.profil-section:last-child{margin-bottom:0;}
+  .profil-section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:5px;}
+  .profil-section-value{font-size:13px;color:#374151;line-height:1.65;white-space:pre-line;}
+  @media(max-width:480px){.profil-modal-header{flex-direction:column;align-items:center;text-align:center;padding-top:40px;}}
+</style>
+
+<div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-12">
+
+  <% if (perangkat.length===0) { %>
+  <div class="bg-white rounded-2xl border-2 border-dashed border-primary-200 p-16 text-center">
+    <div class="text-6xl mb-4">&#127963;</div>
+    <p class="font-bold text-lg text-gray-600">Data perangkat desa belum tersedia</p>
+    <p class="text-sm text-gray-400 mt-2">Silakan isi data melalui panel admin.</p>
+  </div>
+  <% } else { %>
+
+  <div class="text-center mb-10">
+    <p class="text-xs font-bold tracking-widest text-primary-600 uppercase mb-2">Struktur Organisasi</p>
+    <h2 class="text-2xl md:text-3xl font-extrabold text-gray-800 mb-2">Pemerintahan <%= desa.nama %></h2>
+    <p class="text-sm text-gray-400">Susunan perangkat desa berdasarkan jabatan dan hierarki</p>
+  </div>
+
+  <% var SVG_IC='<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>'; %>
+  <% function card(p,cls,bgCls){ if(!p)return ''; var av=p.foto_url?'<img src="'+p.foto_url+'" alt="'+p.nama+'" class="oc-av"/>'  :'<div class="oc-ic">'+SVG_IC+'</div>'; return '<div class="oc-card oc-card-clickable '+cls+'" data-perangkat-id="'+p.id+'" role="button" tabindex="0" title="Lihat profil '+p.nama+'">'+av+'<div class="oc-nm">'+p.nama+'</div>'+'<span class="oc-bg '+bgCls+'">'+p.jabatan+'</span>'+'<div class="oc-click-hint">Klik untuk profil</div></div>'; } %>
+
+  <div class="oc-wrap"><div class="oc-chart">
+
+    <div class="oc-top-row">
+      <% if (bpd) { %><%- card(bpd,'c-ext','bg-ext') %><div class="top-hline"></div><% } %>
+      <% if (kepalaDesa) { %><%- card(kepalaDesa,'c-kades','bg-kades') %>
+      <% } else { %><div class="oc-card c-kades" style="opacity:.45"><div class="oc-ic"><%- SVG_IC %></div><div class="oc-nm">&#8212;</div><span class="oc-bg bg-kades">Kepala Desa</span></div>
+      <% } %>
+      <% if (lpmd) { %><div class="top-hline"></div><%- card(lpmd,'c-ext','bg-ext') %><% } %>
+    </div>
+
+    <div class="cv" style="height:40px;"></div>
+
+    <% if (sekdes) { %><%- card(sekdes,'c-sekdes','bg-sekdes') %>
+    <% } else { %><div class="oc-card c-sekdes" style="opacity:.45"><div class="oc-ic"><%- SVG_IC %></div><div class="oc-nm">&#8212;</div><span class="oc-bg bg-sekdes">Sekretaris Desa</span></div>
+    <% } %>
+
+    <% if (hasKasi || hasKaur) { %><div class="cv" style="height:20px;"></div><% } %>
+
+    <% if (hasKasi || hasKaur) { %>
+    <div class="oc-kasi-kaur-row">
+      <% if (hasKasi) { %>
+      <div class="oc-kasi-group"><div class="oc-kasi-col">
+        <span class="grp-lbl gl-kasi">Kepala Seksi</span>
+        <div class="oc-kasi-inner <%= hasKaur ? 'has-right' : '' %>">
+          <% kasiList.forEach(function(p){ %><div class="kw"><%- card(p,'c-kasi','bg-kasi') %></div><% }); %>
+        </div>
+      </div></div>
+      <% } %>
+      <% if (hasKaur) { %>
+      <div class="oc-kaur-group"><div class="oc-kaur-col">
+        <span class="grp-lbl gl-kaur">Kepala Urusan</span>
+        <div class="oc-kaur-inner <%= hasKasi ? 'has-left' : '' %>">
+          <% kaurList.forEach(function(p){ %><div class="kw"><%- card(p,'c-kaur','bg-kaur') %></div><% }); %>
+        </div>
+      </div></div>
+      <% } %>
+    </div>
+    <% } %>
+
+    <% if (hasDusun) { %>
+    <div class="cv" style="height:40px;"></div>
+    <div class="oc-kadus-section">
+      <p class="oc-kadus-label">Kepala Dusun</p>
+      <div class="oc-kadus-inner">
+        <% kepDusun.forEach(function(p){ %><div class="dw"><%- card(p,'c-kadus','bg-kadus') %></div><% }); %>
+      </div>
+    </div>
+    <% } %>
+
+    <% if (lainnya.length > 0) { %>
+    <div class="cv" style="height:32px;"></div>
+    <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
+      <p style="font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#94a3b8;margin-bottom:8px;">Perangkat Lainnya</p>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;">
+        <% lainnya.forEach(function(p){ %><div class="dw"><%- card(p,'','bg-ext') %></div><% }); %>
+      </div>
+    </div>
+    <% } %>
+
+  </div></div>
+
+  <div class="flex flex-wrap gap-3 justify-center mt-10 pt-6 border-t border-gray-100 text-xs text-gray-500">
+    <div class="flex items-center gap-2"><span style="width:12px;height:12px;border-radius:3px;background:#dcfce7;border:1.5px solid #86efac;display:inline-block;"></span>Kepala Desa</div>
+    <div class="flex items-center gap-2"><span style="width:12px;height:12px;border-radius:3px;background:#dbeafe;border:1.5px solid #93c5fd;display:inline-block;"></span>Sekretaris Desa</div>
+    <div class="flex items-center gap-2"><span style="width:12px;height:12px;border-radius:3px;background:#fef3c7;border:1.5px solid #fcd34d;display:inline-block;"></span>Kepala Seksi (KASI)</div>
+    <div class="flex items-center gap-2"><span style="width:12px;height:12px;border-radius:3px;background:#ede9fe;border:1.5px solid #c4b5fd;display:inline-block;"></span>Kepala Urusan (KAUR)</div>
+    <div class="flex items-center gap-2"><span style="width:12px;height:12px;border-radius:3px;background:#f1f5f9;border:1.5px solid #cbd5e1;display:inline-block;"></span>Kepala Dusun</div>
+    <% if (bpd || lpmd) { %><div class="flex items-center gap-2"><span style="width:12px;height:12px;border-radius:3px;background:#f8fafc;border:1.5px solid #e2e8f0;display:inline-block;"></span>BPD / LPMD</div><% } %>
+  </div>
+
+  <% } %>
+</div>
+
+<% if (perangkat.length > 0) { %>
+<div class="profil-overlay" id="profil-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-nama-teks">
+  <div class="profil-modal" id="profil-modal">
+    <div class="profil-modal-header">
+      <div id="modal-foto-wrap"></div>
+      <div class="profil-modal-info">
+        <p class="profil-modal-nama" id="modal-nama-teks"></p>
+        <span class="profil-modal-jabatan" id="modal-jabatan-badge"></span>
+        <p class="profil-modal-motto" id="modal-motto-teks" style="display:none;"></p>
+      </div>
+      <button class="profil-modal-close" id="modal-tutup" type="button" aria-label="Tutup">&#x2715;</button>
+    </div>
+    <div class="profil-modal-body" id="modal-isi"></div>
+  </div>
+</div>
+<script>
+(function(){
+  var PERANGKAT_DATA = <%- JSON.stringify(perangkat) %>;
+  var peta={};
+  for(var i=0;i<PERANGKAT_DATA.length;i++){peta[PERANGKAT_DATA[i].id]=PERANGKAT_DATA[i];}
+  var overlay=document.getElementById("profil-overlay");
+  var fotoWrap=document.getElementById("modal-foto-wrap");
+  var elNama=document.getElementById("modal-nama-teks");
+  var elBadge=document.getElementById("modal-jabatan-badge");
+  var elMotto=document.getElementById("modal-motto-teks");
+  var elIsi=document.getElementById("modal-isi");
+  var btnTutup=document.getElementById("modal-tutup");
+  var SVG_ORANG='<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>';
+  function styleBadge(j){
+    var s=( j||"").toLowerCase();
+    if(s.indexOf("kepala desa")!==-1&&s.indexOf("dusun")===-1)return "background:#dcfce7;color:#14532d;border:1px solid #86efac;";
+    if(s.indexOf("sekretaris")!==-1||s.indexOf("sekdes")!==-1)return "background:#dbeafe;color:#1e40af;border:1px solid #93c5fd;";
+    if(s.indexOf("kasi")!==-1||s.indexOf("kepala seksi")!==-1)return "background:#fef3c7;color:#92400e;border:1px solid #fcd34d;";
+    if(s.indexOf("kaur")!==-1||s.indexOf("kepala urusan")!==-1)return "background:#ede9fe;color:#5b21b6;border:1px solid #c4b5fd;";
+    if(s.indexOf("kepala dusun")!==-1||s.indexOf("kadus")!==-1)return "background:#f1f5f9;color:#475569;border:1px solid #cbd5e1;";
+    return "background:#f8fafc;color:#64748b;border:1px solid #e2e8f0;";
+  }
+  function barisInfo(label,nilai){
+    if(!nilai||String(nilai).trim()==="")return "";
+    var aman=String(nilai).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+    return '<div class="profil-section"><p class="profil-section-label">'+label+'</p><p class="profil-section-value">'+aman+'</p></div>';
+  }
+  function bukaProfil(id){
+    var p=peta[id]; if(!p)return;
+    if(p.foto_url){fotoWrap.innerHTML='<img src="'+String(p.foto_url).replace(/"/g,"&quot;")+'" alt="'+String(p.nama||"").replace(/"/g,"&quot;")+'" class="profil-modal-foto">';}
+    else{fotoWrap.innerHTML='<div class="profil-modal-foto-placeholder">'+SVG_ORANG+'</div>';}
+    elNama.textContent=p.nama||"—";
+    elBadge.textContent=p.jabatan||"—";
+    elBadge.setAttribute("style",styleBadge(p.jabatan));
+    if(p.motto&&String(p.motto).trim()!==""){elMotto.textContent="“"+p.motto+"”";elMotto.style.display="block";}
+    else{elMotto.textContent="";elMotto.style.display="none";}
+    var html=barisInfo("Profil Singkat",p.profil)+barisInfo("Riwayat Pendidikan",p.pendidikan)+barisInfo("Riwayat Jabatan / Pengalaman",p.pengalaman);
+    if(!html)html='<p style="font-size:13px;color:#94a3b8;text-align:center;padding:8px 0;">Profil belum tersedia.</p>';
+    elIsi.innerHTML=html;
+    overlay.classList.add("aktif");
+    document.body.style.overflow="hidden";
+    setTimeout(function(){btnTutup.focus();},230);
+  }
+  function tutupProfil(){overlay.classList.remove("aktif");document.body.style.overflow="";}
+  document.querySelectorAll("[data-perangkat-id]").forEach(function(card){
+    card.addEventListener("click",function(){var id=card.getAttribute("data-perangkat-id");if(id)bukaProfil(id);});
+    card.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();var id=card.getAttribute("data-perangkat-id");if(id)bukaProfil(id);}});
+  });
+  btnTutup.addEventListener("click",tutupProfil);
+  overlay.addEventListener("click",function(e){if(e.target===overlay)tutupProfil();});
+  document.addEventListener("keydown",function(e){if((e.key==="Escape"||e.keyCode===27)&&overlay.classList.contains("aktif"))tutupProfil();});
+}());
+</script>
+<% } %>

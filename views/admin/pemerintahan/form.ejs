@@ -1,0 +1,190 @@
+<%# views/admin/pemerintahan/form.ejs — Form Tambah/Edit Perangkat Desa %>
+
+  <% if (error) { %>
+    <div class="alert alert-error">
+      <%= error %>
+    </div>
+    <% } %>
+
+      <form action="/admin/pemerintahan/<%= perangkat && perangkat.id ? perangkat.id + '/edit' : 'tambah' %>"
+        method="POST" enctype="multipart/form-data" id="form-perangkat">
+
+        <div style="display:grid; grid-template-columns:1fr 300px; gap:20px; align-items:start;">
+
+          <!-- ═══ KOLOM KIRI: data utama + profil ═══ -->
+          <div style="display:flex; flex-direction:column; gap:16px;">
+
+            <!-- Data Utama -->
+            <div class="admin-card">
+              <p class="admin-card-title">Data Perangkat Desa</p>
+
+              <div class="form-group">
+                <label class="form-label" for="nama">Nama Lengkap <span style="color:#dc2626;">*</span></label>
+                <input type="text" id="nama" name="nama" class="form-control" required maxlength="255"
+                  value="<%= perangkat ? (perangkat.nama || '') : '' %>" placeholder="Nama lengkap perangkat desa..." />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="jabatan">Jabatan <span style="color:#dc2626;">*</span></label>
+                <input type="text" id="jabatan" name="jabatan" class="form-control" required maxlength="255"
+                  value="<%= perangkat ? (perangkat.jabatan || '') : '' %>"
+                  placeholder="Contoh: Kepala Desa, Sekretaris Desa, Kepala Dusun I..." />
+                <p class="form-hint">Perangkat dengan jabatan <strong>Kepala Desa</strong> ditampilkan khusus di bagian
+                  atas.</p>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="urutan">Urutan Tampil</label>
+                <input type="number" id="urutan" name="urutan" class="form-control" min="0" max="9999"
+                  value="<%= perangkat ? (perangkat.urutan != null ? perangkat.urutan : 0) : 0 %>"
+                  style="max-width:120px;" />
+                <p class="form-hint">Angka lebih kecil tampil lebih awal.</p>
+              </div>
+            </div>
+
+            <!-- Profil -->
+            <div class="admin-card">
+              <p class="admin-card-title">Profil Perangkat</p>
+              <p style="font-size:12px; color:#64748b; margin:-8px 0 14px;">Semua field profil bersifat opsional. Akan
+                ditampilkan saat card diklik di halaman publik.</p>
+
+              <div class="form-group">
+                <label class="form-label" for="motto">Motto / Semboyan</label>
+                <input type="text" id="motto" name="motto" class="form-control" maxlength="255"
+                  value="<%= perangkat ? (perangkat.motto || '') : '' %>"
+                  placeholder="Contoh: Melayani dengan ikhlas dan penuh tanggung jawab..." />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="profil">Profil Singkat</label>
+                <textarea id="profil" name="profil" class="form-control" rows="4"
+                  placeholder="Deskripsi singkat mengenai perangkat desa ini..."><%= perangkat ? (perangkat.profil || '') : '' %></textarea>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="pendidikan">Riwayat Pendidikan</label>
+                <textarea id="pendidikan" name="pendidikan" class="form-control" rows="3"
+                  placeholder="Contoh: S1 Administrasi Negara, Universitas Halu Oleo, 2005..."><%= perangkat ? (perangkat.pendidikan || '') : '' %></textarea>
+              </div>
+
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="pengalaman">Riwayat Jabatan / Pengalaman</label>
+                <textarea id="pengalaman" name="pengalaman" class="form-control" rows="4"
+                  placeholder="Contoh: Kepala Dusun I (2015-2019), Sekretaris Desa (2019-sekarang)..."><%= perangkat ? (perangkat.pengalaman || '') : '' %></textarea>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ═══ KOLOM KANAN: status, foto, tombol ═══ -->
+          <div style="display:flex; flex-direction:column; gap:16px;">
+
+            <div class="admin-card">
+              <p class="admin-card-title">Status & Foto</p>
+
+              <!-- Status aktif -->
+              <div class="form-group">
+                <label class="form-label">Status Tampil</label>
+                <div style="display:flex; gap:16px; margin-top:4px;">
+                  <label style="display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer;">
+                    <input type="radio" name="aktif" value="1" <%=(!perangkat || perangkat.aktif==null ||
+                      perangkat.aktif===true || perangkat.aktif==='1' ) ? 'checked' : '' %> />
+                    <span class="badge badge-green" style="font-size:12px;">Aktif</span>
+                  </label>
+                  <label style="display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer;">
+                    <input type="radio" name="aktif" value="0" <%=(perangkat && (perangkat.aktif===false ||
+                      perangkat.aktif==='0' )) ? 'checked' : '' %> />
+                    <span class="badge badge-gray" style="font-size:12px;">Nonaktif</span>
+                  </label>
+                </div>
+                <p class="form-hint">Hanya perangkat Aktif yang ditampilkan di halaman publik.</p>
+              </div>
+
+              <!-- Foto -->
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="foto">
+                  <%= perangkat && perangkat.foto_url ? 'Ganti Foto' : 'Upload Foto' %> (opsional)
+                </label>
+
+                <% if (perangkat && perangkat.foto_url) { %>
+                  <div id="foto-existing" style="margin-bottom:10px; text-align:center;">
+                    <img src="<%= perangkat.foto_url %>" alt="<%= perangkat.nama %>"
+                      style="width:90px; height:90px; border-radius:50%; object-fit:cover; border:3px solid #e2e8f0;"
+                      id="foto-preview-img" />
+                    <p style="font-size:11px; color:#94a3b8; margin-top:4px;">Foto saat ini</p>
+                    <label
+                      style="display:inline-flex; align-items:center; gap:6px; font-size:12px; color:#dc2626; cursor:pointer; margin-top:6px;">
+                      <input type="checkbox" name="hapus_foto" value="1" onchange="toggleHapusFoto(this)" />
+                      Hapus foto ini
+                    </label>
+                  </div>
+                  <% } else { %>
+                    <div style="margin-bottom:10px; text-align:center; display:none;" id="foto-preview-container">
+                      <img src="" alt="Preview"
+                        style="width:90px; height:90px; border-radius:50%; object-fit:cover; border:3px solid #e2e8f0;"
+                        id="foto-preview-img" />
+                    </div>
+                    <% } %>
+
+                      <input type="file" id="foto" name="foto" class="form-control" accept="image/*"
+                        style="padding:6px; font-size:12px;" onchange="previewFoto(this)" />
+                      <p class="form-hint">Format: JPG, PNG, WebP. Maks 20MB.</p>
+              </div>
+            </div>
+
+            <!-- Tombol aksi -->
+            <div style="display:flex; gap:10px;">
+              <button type="submit" class="btn btn-primary" id="btn-simpan-perangkat" style="flex:1;">
+                💾 <%= (perangkat && perangkat.id) ? 'Simpan Perubahan' : 'Tambah Perangkat' %>
+              </button>
+              <a href="/admin/pemerintahan" class="btn btn-secondary">Batal</a>
+            </div>
+
+          </div>
+        </div>
+      </form>
+
+      <script>
+        function previewFoto(input) {
+          if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+              var img = document.getElementById('foto-preview-img');
+              var container = document.getElementById('foto-preview-container');
+              if (img) img.src = e.target.result;
+              if (container) container.style.display = 'block';
+            };
+            reader.readAsDataURL(input.files[0]);
+          }
+        }
+
+        function toggleHapusFoto(cb) {
+          var wrap = document.getElementById('foto-existing');
+          var inputFile = document.getElementById('foto');
+          if (cb.checked) {
+            // Centang hapus: redup preview, disable input file
+            if (wrap) wrap.style.opacity = '0.4';
+            if (inputFile) { inputFile.value = ''; inputFile.disabled = true; }
+          } else {
+            // Uncheck: kembalikan normal
+            if (wrap) wrap.style.opacity = '1';
+            if (inputFile) { inputFile.disabled = false; }
+          }
+        }
+
+        document.getElementById('form-perangkat').addEventListener('submit', function (e) {
+          var nama = document.getElementById('nama').value.trim();
+          var jabatan = document.getElementById('jabatan').value.trim();
+          if (!nama) {
+            e.preventDefault();
+            alert('Nama lengkap wajib diisi.');
+            document.getElementById('nama').focus();
+            return;
+          }
+          if (!jabatan) {
+            e.preventDefault();
+            alert('Jabatan wajib diisi.');
+            document.getElementById('jabatan').focus();
+          }
+        });
+      </script>

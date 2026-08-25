@@ -1,0 +1,153 @@
+<%# views/admin/potensi/index.ejs — Manajemen Potensi Desa %>
+
+  <% if (flash) { %>
+    <div class="alert alert-<%= flash.type === 'success' ? 'success' : 'error' %>">
+      <%= flash.msg %>
+    </div>
+    <% } %>
+
+      <% var potensiCfg={ pertanian: { icon: '🌾' , color: '#16a34a' , desc: 'Komoditas dan hasil pertanian desa' },
+        perkebunan: { icon: '🌿' , color: '#0891b2' , desc: 'Komoditas dan hasil perkebunan desa' }, peternakan: {
+        icon: '🐄' , color: '#d97706' , desc: 'Jenis ternak dan hasil peternakan desa' }, wisata: { icon: '🏞️' ,
+        color: '#7c3aed' , desc: 'Destinasi dan daya tarik wisata desa' }, }; %>
+
+        <!-- Header: judul + tombol tambah -->
+        <div class="admin-card" style="padding:16px 24px; margin-bottom:0;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div>
+              <p class="admin-card-title" style="margin:0;">Potensi Desa</p>
+              <p style="font-size:12px; color:#94a3b8; margin:2px 0 0;">Kelola data potensi berdasarkan 4 kategori</p>
+            </div>
+            <a href="/admin/potensi/tambah" class="btn btn-primary" id="btn-tambah-potensi">+ Tambah Potensi</a>
+          </div>
+        </div>
+
+        <!-- Tab per kategori -->
+        <% POTENSI_KATEGORI.forEach(function(kat) { %>
+          <% var cfg=potensiCfg[kat.key] || { icon: '📌' , color: '#64748b' , desc: '' }; var items=grouped[kat.key] ||
+            []; %>
+            <div class="admin-card" style="margin-top:16px;">
+
+              <!-- Header kategori -->
+              <div
+                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div
+                    style="width:38px; height:38px; border-radius:10px; background:<%= cfg.color %>18; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;">
+                    <%= cfg.icon %>
+                  </div>
+                  <div>
+                    <p class="admin-card-title" style="margin:0;">
+                      <%= kat.label %>
+                    </p>
+                    <p style="font-size:11px; color:#94a3b8; margin:0;">
+                      <%= cfg.desc %>
+                    </p>
+                  </div>
+                  <span class="badge badge-gray">
+                    <%= items.length %> item
+                  </span>
+                </div>
+                <a href="/admin/potensi/tambah?kategori=<%= kat.key %>" class="btn btn-primary btn-sm"
+                  style="background:<%= cfg.color %>;" id="btn-tambah-<%= kat.key %>">+ Tambah</a>
+              </div>
+
+              <!-- Daftar -->
+              <% if (items.length===0) { %>
+                <div
+                  style="text-align:center; padding:24px; background:#f8fafc; border-radius:8px; border:1px dashed #e2e8f0; color:#94a3b8;">
+                  <div style="font-size:28px; margin-bottom:6px;">
+                    <%= cfg.icon %>
+                  </div>
+                  <p style="font-size:13px; margin:0 0 6px;">Belum ada data <%= kat.label %>.</p>
+                  <a href="/admin/potensi/tambah?kategori=<%= kat.key %>"
+                    style="font-size:12px; color:<%= cfg.color %>; text-decoration:underline;">+ Tambah sekarang</a>
+                </div>
+                <% } else { %>
+                  <div style="overflow-x:auto;">
+                    <table class="admin-table">
+                      <thead>
+                        <tr>
+                          <th style="width:44px;">Foto</th>
+                          <th>Judul</th>
+                          <th>Deskripsi</th>
+                          <th style="width:110px;">Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% items.forEach(function(p) { %>
+                          <tr>
+                            <!-- Foto mini -->
+                            <td>
+                              <% if (p.foto_url) { %>
+                                <img src="<%= p.foto_url %>" alt="<%= p.judul %>"
+                                  style="width:40px; height:40px; border-radius:6px; object-fit:cover; border:1px solid #e2e8f0;" />
+                                <% } else { %>
+                                  <div
+                                    style="width:40px; height:40px; border-radius:6px; background:<%= cfg.color %>12; display:flex; align-items:center; justify-content:center; font-size:18px; border:1px solid #e2e8f0;">
+                                    <%= cfg.icon %>
+                                  </div>
+                                  <% } %>
+                            </td>
+                            <!-- Judul -->
+                            <td style="font-weight:500; color:#1e293b; font-size:13px;">
+                              <%= p.judul %>
+                            </td>
+                            <!-- Deskripsi ringkas -->
+                            <td style="color:#64748b; font-size:12px; max-width:280px;">
+                              <% if (p.deskripsi) { %>
+                                <%= p.deskripsi.length> 90 ? p.deskripsi.substring(0, 90) + '...' : p.deskripsi %>
+                                  <% } else { %>
+                                    <span style="color:#cbd5e1; font-style:italic;">Belum ada deskripsi</span>
+                                    <% } %>
+                            </td>
+                            <!-- Aksi -->
+                            <td>
+                              <div style="display:flex; gap:6px;">
+                                <a href="/admin/potensi/<%= p.id %>/edit" class="btn btn-secondary btn-sm"
+                                  id="btn-edit-potensi-<%= p.id %>">✏️ Edit</a>
+                                <form action="/admin/potensi/<%= p.id %>/hapus" method="POST"
+                                  onsubmit="return confirm('Hapus potensi ini?\n\nData yang dihapus tidak dapat dikembalikan.')"
+                                  style="display:inline;">
+                                  <button type="submit" class="btn btn-danger btn-sm"
+                                    id="btn-hapus-potensi-<%= p.id %>">🗑</button>
+                                </form>
+                              </div>
+                            </td>
+                          </tr>
+                          <% }); %>
+                      </tbody>
+                    </table>
+                  </div>
+                  <% } %>
+
+            </div>
+            <% }); %>
+
+              <!-- Info -->
+              <div class="admin-card" style="background:#f0fdf4; border-color:#bbf7d0; margin-top:16px;">
+                <div style="display:flex; align-items:flex-start; gap:12px;">
+                  <span style="font-size:20px;">🌐</span>
+                  <div>
+                    <p style="font-weight:600; font-size:13px; color:#16a34a; margin:0 0 4px;">Terhubung dengan Halaman
+                      Publik</p>
+                    <p style="font-size:12px; color:#059669; margin:0;">
+                      Data ini tampil di halaman
+                      <a href="/potensi" target="_blank" style="color:#16a34a; font-weight:600;">/potensi ↗</a>.
+                      Foto bersifat opsional — card tetap tampil meski tanpa foto.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                  document.querySelectorAll('.alert').forEach(function (el) {
+                    setTimeout(function () {
+                      el.style.transition = 'opacity 0.4s';
+                      el.style.opacity = '0';
+                      setTimeout(function () { el.remove(); }, 400);
+                    }, 4000);
+                  });
+                });
+              </script>

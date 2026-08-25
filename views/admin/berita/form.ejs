@@ -1,0 +1,282 @@
+<%# views/admin/berita/form.ejs — Form Tambah/Edit Berita %>
+
+  <% if (error) { %>
+    <div class="alert alert-error">
+      <%= error %>
+    </div>
+    <% } %>
+
+      <style>
+        .upload-zone {
+          border: 2px dashed #cbd5e1;
+          border-radius: 10px;
+          padding: 20px 14px;
+          text-align: center;
+          cursor: pointer;
+          transition: border-color .2s, background .2s;
+          background: #f8fafc;
+        }
+
+        .upload-zone:hover {
+          border-color: #6366f1;
+          background: #eef2ff;
+        }
+
+        .upload-zone .uz-icon {
+          font-size: 26px;
+          margin-bottom: 6px;
+        }
+
+        .upload-zone .uz-label {
+          font-size: 12px;
+          color: #64748b;
+          line-height: 1.5;
+        }
+
+        .upload-zone .uz-label strong {
+          color: #6366f1;
+        }
+
+        .upload-zone input[type="file"] {
+          display: block;
+          width: 100%;
+          margin-top: 8px;
+          font-size: 12px;
+          color: #64748b;
+          cursor: pointer;
+        }
+
+        .media-preview {
+          margin-top: 10px;
+          border-radius: 8px;
+          overflow: hidden;
+          position: relative;
+          display: none;
+        }
+
+        .media-preview img {
+          width: 100%;
+          max-height: 180px;
+          object-fit: cover;
+          border-radius: 8px;
+          display: block;
+        }
+
+        .media-preview .rm-btn {
+          position: absolute;
+          top: 6px;
+          right: 6px;
+          background: rgba(220, 38, 38, .85);
+          color: #fff;
+          border: none;
+          border-radius: 50%;
+          width: 26px;
+          height: 26px;
+          font-size: 13px;
+          cursor: pointer;
+          line-height: 26px;
+          text-align: center;
+        }
+
+        .media-preview .rm-btn:hover {
+          background: #b91c1c;
+        }
+
+        .char-count {
+          font-size: 11px;
+          color: #94a3b8;
+          text-align: right;
+          margin-top: 2px;
+        }
+
+        .section-divider {
+          border: none;
+          border-top: 1px solid #e2e8f0;
+          margin: 16px 0;
+        }
+
+        .radio-card {
+          display: flex;
+          align-items: center;
+          gap: 7px;
+          font-size: 13px;
+          cursor: pointer;
+          padding: 8px 12px;
+          border: 1.5px solid #e2e8f0;
+          border-radius: 8px;
+          flex: 1;
+          transition: .2s;
+        }
+      </style>
+
+      <form action="/admin/berita/<%= berita ? berita.id + '/edit' : 'tambah' %>" method="POST"
+        enctype="multipart/form-data" id="form-berita">
+
+        <div style="display:grid; grid-template-columns:1fr 340px; gap:20px; align-items:start;">
+
+          <!-- ═══ KOLOM KIRI ═══ -->
+          <div>
+            <div class="admin-card">
+              <p class="admin-card-title">📝 Informasi Berita</p>
+
+              <div class="form-group">
+                <label class="form-label" for="judul">Judul <span style="color:#dc2626">*</span></label>
+                <input type="text" id="judul" name="judul" class="form-control" required maxlength="200"
+                  value="<%= berita ? berita.judul : '' %>" placeholder="Judul berita..." />
+                <div class="char-count"><span id="judul-count">0</span> / 200 karakter</div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="ringkasan">
+                  Ringkasan
+                  <span style="font-weight:400; color:#64748b; font-size:11px;">(tampil di daftar berita)</span>
+                </label>
+                <textarea id="ringkasan" name="ringkasan" class="form-control" rows="3" maxlength="500"
+                  placeholder="Tulis ringkasan singkat isi berita..."><%= berita ? (berita.ringkasan || '') : '' %></textarea>
+                <div class="char-count"><span id="ringkasan-count">0</span> / 500 karakter</div>
+              </div>
+
+              <hr class="section-divider" />
+
+              <div class="form-group">
+                <label class="form-label" for="konten">Konten <span style="color:#dc2626">*</span></label>
+                <textarea id="konten" name="konten" class="form-control" rows="14" required
+                  placeholder="Tulis konten lengkap berita di sini..."><%= berita ? (berita.konten || '') : '' %></textarea>
+                <p class="form-hint">💡 Teks biasa atau HTML sederhana (<code>&lt;b&gt;</code>, <code>&lt;i&gt;</code>,
+                  <code>&lt;p&gt;</code>, <code>&lt;br&gt;</code>).</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ KOLOM KANAN ═══ -->
+          <div style="display:flex; flex-direction:column; gap:16px;">
+
+            <!-- Pengaturan -->
+            <div class="admin-card">
+              <p class="admin-card-title">⚙️ Pengaturan</p>
+
+              <div class="form-group">
+                <label class="form-label" for="kategori">Kategori</label>
+                <select id="kategori" name="kategori" class="form-control">
+                  <option value="berita" <%=(!berita || berita.kategori==='berita' ) ? 'selected' : '' %>>Berita
+                  </option>
+                  <option value="pengumuman" <%=(berita && berita.kategori==='pengumuman' ) ? 'selected' : '' %>
+                    >Pengumuman</option>
+                </select>
+              </div>
+
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Status Publikasi</label>
+                <div style="display:flex; gap:10px; margin-top:6px;">
+                  <label class="radio-card" id="lbl-pub">
+                    <input type="radio" name="published" value="1" <%=(!berita || berita.published) ? 'checked' : '' %>
+                    onchange="styleRadio()" />
+                    ✅ Published
+                  </label>
+                  <label class="radio-card" id="lbl-draft">
+                    <input type="radio" name="published" value="0" <%=(berita && !berita.published) ? 'checked' : '' %>
+                    onchange="styleRadio()" />
+                    📋 Draft
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Upload Foto -->
+            <div class="admin-card">
+              <p class="admin-card-title">🖼️ Foto Utama <span
+                  style="font-size:11px; font-weight:400; color:#94a3b8;">(opsional)</span></p>
+
+              <% if (berita && berita.foto_url) { %>
+                <div id="foto-existing" style="margin-bottom:10px;">
+                  <img src="<%= berita.foto_url %>" alt="foto"
+                    style="width:100%; border-radius:8px; object-fit:cover; max-height:150px;" />
+                  <p style="font-size:11px; color:#64748b; margin:4px 0 6px;">Foto saat ini</p>
+                  <label
+                    style="display:flex; align-items:center; gap:6px; font-size:12px; color:#dc2626; cursor:pointer;">
+                    <input type="checkbox" name="hapus_foto" value="1"
+                      onchange="toggleExisting('foto-existing', this)" />
+                    Hapus foto ini
+                  </label>
+                </div>
+                <% } %>
+
+                  <div class="upload-zone">
+                    <div class="uz-icon">📷</div>
+                    <div class="uz-label"><strong>Pilih Foto</strong><br>JPG, PNG, WebP · Maks 20 MB</div>
+                    <input type="file" id="foto" name="foto" accept="image/*" onchange="previewFoto(this)" />
+                  </div>
+
+                  <div class="media-preview" id="foto-preview">
+                    <img id="foto-img" src="" alt="preview" />
+                    <button type="button" class="rm-btn" onclick="clearFoto()">✕</button>
+                  </div>
+            </div>
+
+            <!-- Tombol -->
+            <div style="display:flex; gap:10px;">
+              <button type="submit" class="btn btn-primary" id="btn-simpan" style="flex:1;">
+                💾 <%= berita ? 'Simpan Perubahan' : 'Tambah Berita' %>
+              </button>
+              <a href="/admin/berita" class="btn btn-secondary">Batal</a>
+            </div>
+
+          </div><!-- /kanan -->
+        </div><!-- /grid -->
+      </form>
+
+      <script>
+        /* Char counter */
+        function setupCounter(id, countId) {
+          var el = document.getElementById(id);
+          var ct = document.getElementById(countId);
+          if (!el || !ct) return;
+          function upd() { ct.textContent = el.value.length; }
+          el.addEventListener('input', upd);
+          upd();
+        }
+        setupCounter('judul', 'judul-count');
+        setupCounter('ringkasan', 'ringkasan-count');
+
+        /* Radio style */
+        function styleRadio() {
+          var isPub = document.querySelector('input[name="published"][value="1"]').checked;
+          var lPub = document.getElementById('lbl-pub');
+          var lDraft = document.getElementById('lbl-draft');
+          lPub.style.borderColor = isPub ? '#22c55e' : '#e2e8f0';
+          lPub.style.background = isPub ? '#f0fdf4' : '';
+          lDraft.style.borderColor = !isPub ? '#f59e0b' : '#e2e8f0';
+          lDraft.style.background = !isPub ? '#fffbeb' : '';
+        }
+        styleRadio();
+
+        /* Preview foto */
+        function previewFoto(input) {
+          if (!input.files[0]) return;
+          var preview = document.getElementById('foto-preview');
+          var img = document.getElementById('foto-img');
+          img.src = URL.createObjectURL(input.files[0]);
+          preview.style.display = 'block';
+        }
+        function clearFoto() {
+          var input = document.getElementById('foto');
+          var preview = document.getElementById('foto-preview');
+          var img = document.getElementById('foto-img');
+          URL.revokeObjectURL(img.src);
+          img.src = ''; input.value = '';
+          preview.style.display = 'none';
+        }
+
+        /* Toggle existing foto (checkbox hapus) */
+        function toggleExisting(containerId, cb) {
+          var el = document.getElementById(containerId);
+          if (el) el.style.opacity = cb.checked ? '0.35' : '1';
+        }
+
+        /* Submit feedback */
+        document.getElementById('form-berita').addEventListener('submit', function () {
+          var btn = document.getElementById('btn-simpan');
+          btn.disabled = true;
+          btn.textContent = '⏳ Menyimpan...';
+        });
+      </script>

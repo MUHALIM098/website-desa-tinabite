@@ -1,0 +1,104 @@
+<%# views/public/galeri.ejs — Halaman Galeri Foto %>
+
+  <!-- Page Header -->
+  <section class="bg-gradient-to-r from-primary-700 to-primary-900 text-white py-12 px-4">
+    <div class="max-w-7xl mx-auto">
+      <p class="text-primary-200 text-sm mb-1">← <a href="/" class="hover:underline">Beranda</a></p>
+      <h1 class="text-3xl font-bold">Galeri</h1>
+      <p class="text-primary-200 mt-1">Dokumentasi kegiatan dan keindahan <%= desa.nama %>
+      </p>
+    </div>
+  </section>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <% if (foto.length===0) { %>
+      <div class="bg-white rounded-xl border border-dashed border-gray-300 p-14 text-center text-gray-400">
+        <p class="text-5xl mb-4">🖼️</p>
+        <p class="font-semibold text-lg text-gray-500">Galeri foto belum tersedia</p>
+        <p class="text-sm mt-2">Foto akan muncul di sini setelah ditambahkan melalui panel admin.</p>
+      </div>
+      <% } else { %>
+
+        <% if (Object.keys(fotoByKategori).length> 1) { %>
+          <!-- Tampilkan per Kategori jika ada lebih dari 1 kategori -->
+          <% Object.entries(fotoByKategori).forEach(([kategori, items])=> { %>
+            <div class="mb-12">
+              <h2 class="text-xl font-bold text-gray-700 mb-6 flex items-center gap-2">
+                <span class="w-1 h-6 bg-primary-500 rounded-full inline-block"></span>
+                <%= kategori %>
+              </h2>
+              <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                <% items.forEach(f=> { %>
+                  <div
+                    class="group relative bg-gray-100 rounded-xl overflow-hidden aspect-square cursor-pointer hover:shadow-lg transition-shadow"
+                    onclick="openLightbox('<%= f.foto_url %>', '<%= (f.judul || '').replace(/'/g, " \\'") %>')">
+                    <img src="<%= f.foto_url %>" alt="<%= f.judul || 'Foto galeri' %>"
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <% if (f.judul) { %>
+                      <div
+                        class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <p class="text-white text-sm font-medium">
+                          <%= f.judul %>
+                        </p>
+                      </div>
+                      <% } %>
+                  </div>
+                  <% }); %>
+              </div>
+            </div>
+            <% }); %>
+
+              <% } else { %>
+                <!-- Semua foto tanpa kategori atau satu kategori saja -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                  <% foto.forEach(f=> { %>
+                    <div
+                      class="group relative bg-gray-100 rounded-xl overflow-hidden aspect-square cursor-pointer hover:shadow-lg transition-shadow"
+                      onclick="openLightbox('<%= f.foto_url %>', '<%= (f.judul || '').replace(/'/g, " \\'") %>')">
+                      <img src="<%= f.foto_url %>" alt="<%= f.judul || 'Foto galeri' %>"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <% if (f.judul) { %>
+                        <div
+                          class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <p class="text-white text-sm font-medium">
+                            <%= f.judul %>
+                          </p>
+                        </div>
+                        <% } %>
+                    </div>
+                    <% }); %>
+                </div>
+                <% } %>
+
+                  <% } %>
+  </div>
+
+  <!-- Lightbox Modal -->
+  <div id="lightbox" class="fixed inset-0 bg-black/90 z-50 hidden items-center justify-center p-4"
+    onclick="closeLightbox()">
+    <button class="absolute top-4 right-4 text-white text-3xl font-bold leading-none hover:text-gray-300"
+      onclick="closeLightbox()">×</button>
+    <div class="max-w-4xl max-h-full" onclick="event.stopPropagation()">
+      <img id="lightbox-img" src="" alt="" class="max-w-full max-h-[80vh] object-contain rounded-lg" />
+      <p id="lightbox-caption" class="text-white text-center mt-3 text-sm"></p>
+    </div>
+  </div>
+
+  <script>
+    function openLightbox(src, caption) {
+      document.getElementById('lightbox-img').src = src;
+      document.getElementById('lightbox-caption').textContent = caption;
+      const lb = document.getElementById('lightbox');
+      lb.classList.remove('hidden');
+      lb.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      const lb = document.getElementById('lightbox');
+      lb.classList.add('hidden');
+      lb.classList.remove('flex');
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+  </script>

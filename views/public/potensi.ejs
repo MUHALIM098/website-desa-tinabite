@@ -1,0 +1,471 @@
+<%# views/public/potensi.ejs — Halaman Potensi Desa %>
+
+  <!-- Page Header -->
+  <section class="bg-gradient-to-r from-primary-700 to-primary-900 text-white py-14 px-4">
+    <div class="max-w-7xl mx-auto">
+      <p class="text-primary-200 text-sm mb-2">&#8592; <a href="/" class="hover:underline">Beranda</a></p>
+      <h1 class="text-3xl md:text-4xl font-bold">Potensi Desa</h1>
+      <p class="text-primary-200 mt-2 text-base">Jelajahi berbagai potensi yang dimiliki <%= desa.nama %>
+      </p>
+    </div>
+  </section>
+
+  <style>
+    /* ── Filter pill ── */
+    .potensi-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+
+    .filter-btn {
+      padding: 7px 18px;
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1.5px solid #e2e8f0;
+      background: #fff;
+      color: #64748b;
+      cursor: pointer;
+      transition: all .15s ease;
+      text-decoration: none;
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .filter-btn:hover {
+      border-color: #16a34a;
+      color: #16a34a;
+      background: #f0fdf4;
+    }
+
+    .filter-btn.aktif {
+      background: #16a34a;
+      border-color: #16a34a;
+      color: #fff;
+    }
+
+    .filter-btn.aktif:hover {
+      background: #15803d;
+      border-color: #15803d;
+    }
+
+    /* ── Card grid ── */
+    .potensi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    @media (max-width:640px) {
+      .potensi-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ── Card ── */
+    .potensi-card {
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+      transition: box-shadow .18s, transform .18s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .potensi-card:hover {
+      box-shadow: 0 8px 28px rgba(0, 0, 0, .10);
+      transform: translateY(-3px);
+    }
+
+    /* ── Media area ── */
+    .potensi-media-wrap {
+      position: relative;
+      width: 100%;
+      height: 190px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .potensi-foto {
+      width: 100%;
+      height: 190px;
+      object-fit: cover;
+      display: block;
+      cursor: zoom-in;
+      transition: transform .22s ease;
+    }
+
+    .potensi-foto:hover {
+      transform: scale(1.04);
+    }
+
+    /* Overlay "klik untuk perbesar" saat hover foto */
+    .potensi-foto-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .2s;
+      pointer-events: none;
+    }
+
+    .potensi-media-wrap:hover .potensi-foto-overlay {
+      background: rgba(0, 0, 0, .25);
+    }
+
+    .potensi-foto-overlay span {
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      opacity: 0;
+      transition: opacity .2s;
+      background: rgba(0, 0, 0, .45);
+      padding: 4px 12px;
+      border-radius: 99px;
+    }
+
+    .potensi-media-wrap:hover .potensi-foto-overlay span {
+      opacity: 1;
+    }
+
+    /* Placeholder (tanpa foto) */
+    .potensi-placeholder {
+      width: 100%;
+      height: 190px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 54px;
+    }
+
+    /* Body card */
+    .potensi-card-body {
+      padding: 18px 20px 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .potensi-card-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      padding: 3px 10px;
+      border-radius: 99px;
+      margin-bottom: 10px;
+      width: fit-content;
+    }
+
+    .potensi-card-judul {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 8px;
+      line-height: 1.4;
+    }
+
+    .potensi-card-desc {
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.65;
+      margin: 0;
+      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .potensi-card-desc-kosong {
+      font-size: 12px;
+      color: #cbd5e1;
+      font-style: italic;
+      margin: 0;
+    }
+
+    .potensi-card-strip {
+      height: 4px;
+      margin-top: auto;
+      padding-top: 14px;
+    }
+
+    .potensi-card-strip-inner {
+      height: 4px;
+      border-radius: 99px;
+      width: 100%;
+    }
+
+    /* Empty state */
+    .potensi-empty {
+      text-align: center;
+      padding: 72px 16px;
+      color: #94a3b8;
+      background: #fff;
+      border-radius: 16px;
+      border: 2px dashed #e2e8f0;
+    }
+
+    /* ── Lightbox modal ── */
+    .lb-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .88);
+      z-index: 9100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+    }
+
+    .lb-overlay.aktif {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .lb-wrap {
+      position: relative;
+      max-width: min(900px, 96vw);
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .lb-img {
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 10px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, .6);
+      display: block;
+      opacity: 0;
+      transform: scale(.95);
+      transition: opacity .22s, transform .22s;
+    }
+
+    .lb-overlay.aktif .lb-img {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .lb-caption {
+      color: #e2e8f0;
+      font-size: 13px;
+      margin-top: 12px;
+      text-align: center;
+      max-width: 600px;
+    }
+
+    .lb-close {
+      position: fixed;
+      top: 16px;
+      right: 20px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .15);
+      border: 1.5px solid rgba(255, 255, 255, .3);
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .15s;
+      z-index: 9101;
+    }
+
+    .lb-close:hover {
+      background: rgba(255, 255, 255, .28);
+    }
+  </style>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <% var katCfg={ pertanian: { label:'Pertanian', icon:'🌾', color:'#16a34a', bg:'#f0fdf4', border:'#bbf7d0',
+      gradient:'linear-gradient(90deg,#16a34a,#4ade80)' }, perkebunan: { label:'Perkebunan', icon:'🌿', color:'#0891b2',
+      bg:'#ecfeff', border:'#a5f3fc', gradient:'linear-gradient(90deg,#0891b2,#67e8f9)' }, peternakan: {
+      label:'Peternakan', icon:'🐄', color:'#d97706', bg:'#fffbeb', border:'#fde68a',
+      gradient:'linear-gradient(90deg,#d97706,#fbbf24)' }, wisata: { label:'Wisata', icon:'🏞️', color:'#7c3aed',
+      bg:'#f5f3ff', border:'#ddd6fe', gradient:'linear-gradient(90deg,#7c3aed,#a78bfa)' }, }; %>
+
+      <!-- Filter Kategori -->
+      <div class="potensi-filters">
+        <a href="/potensi" class="filter-btn <%= kategoriAktif === 'semua' ? 'aktif' : '' %>">Semua</a>
+        <% POTENSI_KATEGORI.forEach(function(k) { %>
+          <a href="/potensi?kategori=<%= k.key %>" class="filter-btn <%= kategoriAktif === k.key ? 'aktif' : '' %>">
+            <%= katCfg[k.key] ? katCfg[k.key].icon + ' ' : '' %>
+              <%= k.label %>
+          </a>
+          <% }); %>
+      </div>
+
+      <% if (potensi.length===0) { %>
+        <div class="potensi-empty">
+          <p style="font-size:48px; margin-bottom:12px;">🌿</p>
+          <p style="font-size:16px; font-weight:600; color:#64748b; margin-bottom:6px;">Belum ada data potensi</p>
+          <p style="font-size:13px;">
+            <% if (kategoriAktif !=='semua' ) { %>
+              Tidak ada data untuk kategori ini. <a href="/potensi" style="color:#16a34a;">Lihat semua →</a>
+              <% } else { %>
+                Silakan isi data potensi desa melalui panel admin.
+                <% } %>
+          </p>
+        </div>
+
+        <% } else { %>
+
+          <div class="potensi-grid">
+            <% potensi.forEach(function(item) { %>
+              <% var cfg=katCfg[item.kategori] || { label:item.kategori, icon:'📌', color:'#64748b', bg:'#f8fafc',
+                border:'#e2e8f0', gradient:'linear-gradient(90deg,#94a3b8,#cbd5e1)' }; %>
+
+                <div class="potensi-card">
+
+                  <%# ── Area foto ── foto_url berisi URL lengkap dari Supabase (dibuat saat upload via storageService).
+                    Jika URL tidak valid / gagal dimuat, onerror menyembunyikan img dan menampilkan placeholder. Jika
+                    foto_url kosong/null, langsung tampilkan placeholder. %>
+                    <% if (item.foto_url) { %>
+                      <div class="potensi-media-wrap" onclick="bukaLightbox(this)" style="cursor:zoom-in;"
+                        data-url="<%- encodeURI(item.foto_url) %>" data-judul="<%= item.judul.replace(/" /g, '&quot;' )
+                        %>">
+                        <img src="<%= item.foto_url %>" alt="<%= item.judul %>" class="potensi-foto" loading="lazy"
+                          onerror="gambarError(this)" />
+                        <div class="potensi-foto-overlay"><span>&#128269; Perbesar</span></div>
+                      </div>
+                      <% } else { %>
+                        <div class="potensi-placeholder" style="background:<%= cfg.bg %>;">
+                          <%= cfg.icon %>
+                        </div>
+                        <% } %>
+
+                          <div class="potensi-card-body">
+                            <span class="potensi-card-badge"
+                              style="background:<%= cfg.bg %>; color:<%= cfg.color %>; border:1px solid <%= cfg.border %>;">
+                              <%= cfg.label %>
+                            </span>
+                            <h3 class="potensi-card-judul">
+                              <%= item.judul %>
+                            </h3>
+                            <% if (item.deskripsi && item.deskripsi.trim() !=='' ) { %>
+                              <p class="potensi-card-desc">
+                                <%= item.deskripsi %>
+                              </p>
+                              <% } else { %>
+                                <p class="potensi-card-desc-kosong">Deskripsi belum tersedia.</p>
+                                <% } %>
+                                  <div class="potensi-card-strip">
+                                    <div class="potensi-card-strip-inner" style="background:<%= cfg.gradient %>;"></div>
+                                  </div>
+                          </div>
+
+                </div>
+                <% }); %>
+          </div>
+
+          <p style="text-align:center; font-size:12px; color:#94a3b8; margin-top:28px;">
+            Menampilkan <%= potensi.length %> potensi
+              <% if (kategoriAktif !=='semua' ) { %>
+                dalam kategori <strong style="color:#16a34a;">
+                  <%= katCfg[kategoriAktif] ? katCfg[kategoriAktif].label : kategoriAktif %>
+                </strong>
+                <% } %>
+          </p>
+
+          <% } %>
+
+  </div>
+
+  <!-- ── Lightbox Modal ── -->
+  <div class="lb-overlay" id="lb-overlay" role="dialog" aria-modal="true">
+    <button class="lb-close" id="lb-close" type="button" aria-label="Tutup">&#x2715;</button>
+    <div class="lb-wrap">
+      <img src="" alt="" class="lb-img" id="lb-img" />
+      <p class="lb-caption" id="lb-caption"></p>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+
+      /* ── Elemen lightbox ── */
+      var overlay = document.getElementById('lb-overlay');
+      var lbImg = document.getElementById('lb-img');
+      var lbCap = document.getElementById('lb-caption');
+      var btnClose = document.getElementById('lb-close');
+
+      /* ── Buka lightbox ── */
+      function bukaLightbox(wrapEl) {
+        var url = wrapEl.getAttribute('data-url');
+        var judul = wrapEl.getAttribute('data-judul') || '';
+        if (!url) return;
+
+        lbImg.src = decodeURI(url);   // URL asli (tidak di-encode ganda)
+        lbImg.alt = judul;
+        lbCap.textContent = judul;
+        overlay.classList.add('aktif');
+        document.body.style.overflow = 'hidden';
+        setTimeout(function () { btnClose.focus(); }, 220);
+      }
+
+      /* Expose ke onclick di HTML */
+      window.bukaLightbox = bukaLightbox;
+
+      /* ── Tutup lightbox ── */
+      function tutupLightbox() {
+        overlay.classList.remove('aktif');
+        document.body.style.overflow = '';
+        /* Reset src setelah animasi selesai agar tidak ada request dua kali */
+        setTimeout(function () { lbImg.src = ''; }, 250);
+      }
+
+      btnClose.addEventListener('click', tutupLightbox);
+
+      /* Klik area gelap (luar gambar) */
+      overlay.addEventListener('click', function (e) {
+        if (e.target === overlay || e.target === document.querySelector('.lb-wrap')) {
+          tutupLightbox();
+        }
+      });
+
+      /* Escape */
+      document.addEventListener('keydown', function (e) {
+        if ((e.key === 'Escape' || e.keyCode === 27) && overlay.classList.contains('aktif')) {
+          tutupLightbox();
+        }
+      });
+
+      /* ── Fallback: gambar rusak / URL tidak valid ── */
+      window.gambarError = function (imgEl) {
+        /* Sembunyikan img yang rusak */
+        imgEl.style.display = 'none';
+
+        /* Ambil wrap dan cfg warna dari parent */
+        var wrap = imgEl.closest('.potensi-media-wrap');
+        if (!wrap) return;
+
+        /* Ambil icon dari card — cari badge teks di card body */
+        var card = wrap.closest('.potensi-card');
+        var badge = card ? card.querySelector('.potensi-card-badge') : null;
+
+        /* Ganti wrap dengan placeholder */
+        var ph = document.createElement('div');
+        ph.className = 'potensi-placeholder';
+        ph.style.background = '#f1f5f9';
+        ph.textContent = '🖼️';
+        wrap.parentNode.replaceChild(ph, wrap);
+      };
+
+    }());
+  </script>

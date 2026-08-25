@@ -1,0 +1,120 @@
+<%# views/admin/kondisi/form.ejs — Form Tambah/Edit Data Kondisi Desa %>
+
+<% if (error) { %>
+<div class="alert alert-error"><%= error %></div>
+<% } %>
+
+<form action="/admin/kondisi/<%= kondisi && kondisi.id ? kondisi.id + '/edit' : 'tambah' %>" method="POST">
+  <div style="display:grid; grid-template-columns:1fr 300px; gap:20px; align-items:start;">
+
+    <!-- Kolom kiri: konten -->
+    <div>
+      <div class="admin-card">
+        <p class="admin-card-title">Isi Data</p>
+
+        <div class="form-group">
+          <label class="form-label" for="judul">Judul <span style="color:#dc2626">*</span></label>
+          <input type="text" id="judul" name="judul" class="form-control" required
+            value="<%= kondisi ? (kondisi.judul || '') : '' %>"
+            placeholder="Contoh: Batas Utara, Jumlah Penduduk Laki-laki, Jumlah SD..." />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="konten">Konten / Narasi</label>
+          <textarea id="konten" name="konten" class="form-control" rows="8"
+            placeholder="Tulis penjelasan lengkap di sini..."><%= kondisi ? (kondisi.konten || '') : '' %></textarea>
+          <p class="form-hint">Bisa berupa narasi panjang, daftar, atau tabel teks.</p>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div class="form-group">
+            <label class="form-label" for="nilai">Nilai Ringkas</label>
+            <input type="text" id="nilai" name="nilai" class="form-control"
+              value="<%= kondisi ? (kondisi.nilai || '') : '' %>"
+              placeholder="Contoh: 1.250, 320, 85%" />
+            <p class="form-hint">Angka atau teks pendek (opsional)</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="satuan">Satuan</label>
+            <input type="text" id="satuan" name="satuan" class="form-control"
+              value="<%= kondisi ? (kondisi.satuan || '') : '' %>"
+              placeholder="Contoh: jiwa, ha, %, unit" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kolom kanan: kategori -->
+    <div>
+      <div class="admin-card">
+        <p class="admin-card-title">Kategori</p>
+
+        <div class="form-group">
+          <label class="form-label" for="kategori">Kategori Utama <span style="color:#dc2626">*</span></label>
+          <select id="kategori" name="kategori" class="form-control" onchange="updateSubKategori()" required>
+            <option value="">— Pilih Kategori —</option>
+            <% Object.entries(KATEGORI_LABELS).forEach(([key, label]) => { %>
+            <option value="<%= key %>" <%= (kondisi && kondisi.kategori === key) ? 'selected' : '' %>>
+              <%= label %>
+            </option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="sub_kategori">Sub Kategori <span style="color:#dc2626">*</span></label>
+          <select id="sub_kategori" name="sub_kategori" class="form-control" required>
+            <option value="">— Pilih Sub Kategori —</option>
+            <% Object.entries(KONDISI_MAP).forEach(([kat, subs]) => { %>
+              <% subs.forEach(sub => { %>
+              <option value="<%= sub.key %>" data-kategori="<%= kat %>"
+                <%= (kondisi && kondisi.sub_kategori === sub.key) ? 'selected' : '' %>>
+                <%= sub.label %>
+              </option>
+              <% }) %>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="urutan">Urutan Tampil</label>
+          <input type="number" id="urutan" name="urutan" class="form-control" min="0"
+            value="<%= kondisi ? (kondisi.urutan || 0) : 0 %>" style="max-width:100px;" />
+        </div>
+      </div>
+
+      <div style="display:flex; gap:10px;">
+        <button type="submit" class="btn btn-primary" id="btn-simpan-kondisi" style="flex:1;">
+          💾 <%= (kondisi && kondisi.id) ? 'Simpan Perubahan' : 'Tambah Data' %>
+        </button>
+        <a href="/admin/kondisi" class="btn btn-secondary">Batal</a>
+      </div>
+    </div>
+  </div>
+</form>
+
+<script>
+// Konstanta map dari server
+const KONDISI_MAP = <%- JSON.stringify(KONDISI_MAP) %>;
+
+function updateSubKategori() {
+  const kat = document.getElementById('kategori').value;
+  const sel = document.getElementById('sub_kategori');
+  const current = sel.value;
+
+  // Tampilkan/sembunyikan option berdasarkan kategori
+  Array.from(sel.options).forEach(opt => {
+    if (!opt.dataset.kategori) return; // skip placeholder
+    opt.style.display = (opt.dataset.kategori === kat) ? '' : 'none';
+  });
+
+  // Reset jika pilihan sekarang tidak sesuai kategori
+  const currentOpt = sel.options[sel.selectedIndex];
+  if (currentOpt && currentOpt.dataset.kategori && currentOpt.dataset.kategori !== kat) {
+    sel.value = '';
+  }
+}
+
+// Jalankan saat load untuk kondisi edit
+document.addEventListener('DOMContentLoaded', updateSubKategori);
+</script>

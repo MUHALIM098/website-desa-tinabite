@@ -1,0 +1,18 @@
+<%# views/public/error.ejs — Halaman Error Server %>
+
+<div class="min-h-[60vh] flex flex-col items-center justify-center px-4 py-16 text-center">
+  <div class="text-8xl font-bold text-gray-200 mb-4"><%= statusCode || 500 %></div>
+  <h1 class="text-2xl font-bold text-gray-700 mb-3">Terjadi Kesalahan</h1>
+  <p class="text-gray-500 mb-6 max-w-md"><%= message || 'Terjadi kesalahan pada server.' %></p>
+
+  <% if (stack) { %>
+  <!-- Stack trace hanya muncul di mode development -->
+  <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-left max-w-2xl w-full mb-6 overflow-auto">
+    <p class="text-xs font-mono text-gray-500 whitespace-pre-wrap"><%= stack %></p>
+  </div>
+  <% } %>
+
+  <a href="/" class="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-700 transition-colors">
+    ← Kembali ke Beranda
+  </a>
+</div>

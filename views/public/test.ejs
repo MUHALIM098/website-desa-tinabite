@@ -1,0 +1,91 @@
+<%# views/public/test.ejs — Halaman Test Setup %>
+<%# Halaman ini untuk memverifikasi konfigurasi project — hapus di production! %>
+
+<div class="max-w-3xl mx-auto px-4 py-12">
+
+  <div class="text-center mb-10">
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">🔧 Halaman Test — Website Desa Tinabite</h1>
+    <p class="text-gray-500 text-sm">Halaman ini hanya untuk keperluan development. Hapus route <code class="bg-gray-100 px-1 rounded">/test</code> sebelum production.</p>
+  </div>
+
+  <!-- Status Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+
+    <!-- Status Server -->
+    <div class="bg-white rounded-xl border border-gray-200 p-5 text-center shadow-sm">
+      <div class="text-2xl mb-2">✅</div>
+      <p class="font-semibold text-gray-700 text-sm">Express Server</p>
+      <p class="text-green-600 text-sm font-medium mt-1">Berjalan Normal</p>
+    </div>
+
+    <!-- Status EJS -->
+    <div class="bg-white rounded-xl border border-gray-200 p-5 text-center shadow-sm">
+      <div class="text-2xl mb-2">✅</div>
+      <p class="font-semibold text-gray-700 text-sm">EJS Template</p>
+      <p class="text-green-600 text-sm font-medium mt-1">Berjalan Normal</p>
+    </div>
+
+    <!-- Status Supabase -->
+    <div class="bg-white rounded-xl border border-gray-200 p-5 text-center shadow-sm">
+      <% if (supabaseConfigured) { %>
+        <div class="text-2xl mb-2">✅</div>
+        <p class="font-semibold text-gray-700 text-sm">Supabase</p>
+        <p class="text-green-600 text-sm font-medium mt-1">Terkonfigurasi</p>
+      <% } else { %>
+        <div class="text-2xl mb-2">⚠️</div>
+        <p class="font-semibold text-gray-700 text-sm">Supabase</p>
+        <p class="text-yellow-600 text-sm font-medium mt-1">Belum Dikonfigurasi</p>
+      <% } %>
+    </div>
+
+  </div>
+
+  <!-- Info Detail -->
+  <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+    <h2 class="font-semibold text-gray-800 mb-4 text-sm uppercase tracking-wide">Informasi Server</h2>
+    <dl class="space-y-3 text-sm">
+      <div class="flex justify-between border-b border-gray-100 pb-3">
+        <dt class="text-gray-500">Environment</dt>
+        <dd class="font-medium text-gray-800"><%= nodeEnv %></dd>
+      </div>
+      <div class="flex justify-between border-b border-gray-100 pb-3">
+        <dt class="text-gray-500">Port</dt>
+        <dd class="font-medium text-gray-800"><%= port %></dd>
+      </div>
+      <div class="flex justify-between border-b border-gray-100 pb-3">
+        <dt class="text-gray-500">Waktu Server</dt>
+        <dd class="font-medium text-gray-800"><%= timestamp %></dd>
+      </div>
+      <div class="flex justify-between border-b border-gray-100 pb-3">
+        <dt class="text-gray-500">SUPABASE_URL</dt>
+        <dd class="font-medium <%= supabaseConfigured ? 'text-green-600' : 'text-red-500' %>">
+          <%= supabaseConfigured ? 'Sudah diset ✓' : 'Belum diset ✗' %>
+        </dd>
+      </div>
+      <div class="flex justify-between">
+        <dt class="text-gray-500">Tailwind CSS</dt>
+        <dd class="font-medium text-green-600">Berjalan Normal ✓</dd>
+      </div>
+    </dl>
+  </div>
+
+  <% if (!supabaseConfigured) { %>
+  <!-- Instruksi jika Supabase belum dikonfigurasi -->
+  <div class="mt-6 bg-yellow-50 border border-yellow-200 rounded-xl p-5">
+    <h3 class="font-semibold text-yellow-800 mb-2">⚠️ Supabase Belum Dikonfigurasi</h3>
+    <p class="text-yellow-700 text-sm mb-3">Untuk mengaktifkan fitur database dan storage, buat file <code class="bg-yellow-100 px-1 rounded">.env</code> dari template:</p>
+    <ol class="list-decimal list-inside text-sm text-yellow-700 space-y-1">
+      <li>Salin <code class="bg-yellow-100 px-1 rounded">.env.example</code> menjadi <code class="bg-yellow-100 px-1 rounded">.env</code></li>
+      <li>Isi <code class="bg-yellow-100 px-1 rounded">SUPABASE_URL</code> dan <code class="bg-yellow-100 px-1 rounded">SUPABASE_ANON_KEY</code> dari dashboard Supabase</li>
+      <li>Restart server dengan <code class="bg-yellow-100 px-1 rounded">npm run dev</code></li>
+    </ol>
+  </div>
+  <% } %>
+
+  <div class="mt-6 text-center">
+    <a href="/" class="inline-flex items-center gap-2 bg-primary-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors">
+      ← Kembali ke Beranda
+    </a>
+  </div>
+
+</div>

@@ -1,0 +1,71 @@
+<%# views/admin/berita/index.ejs %>
+
+<% if (flash) { %>
+<div class="alert alert-<%= flash.type === 'success' ? 'success' : 'error' %>">
+  <%= flash.msg %>
+</div>
+<% } %>
+
+<div class="admin-card">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+    <p class="admin-card-title" style="margin:0;">Semua Berita</p>
+    <a href="/admin/berita/tambah" class="btn btn-primary" id="btn-tambah-berita">+ Tambah Berita</a>
+  </div>
+
+  <% if (daftarBerita.length === 0) { %>
+    <p style="text-align:center; color:#94a3b8; padding:32px 0; font-size:13px;">Belum ada berita. Mulai dengan menambah berita pertama.</p>
+  <% } else { %>
+  <div style="overflow-x:auto;">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Media</th>
+          <th>Judul</th>
+          <th>Kategori</th>
+          <th>Status</th>
+          <th>Tanggal</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% daftarBerita.forEach(b => { %>
+        <tr>
+          <td>
+            <div style="display:flex; flex-direction:column; gap:4px; align-items:center;">
+              <% if (b.foto_url) { %>
+                <img src="<%= b.foto_url %>" alt="<%= b.judul %>" class="img-preview" />
+              <% } %>
+              <% if (b.video_url) { %>
+                <span style="font-size:10px; background:#dbeafe; color:#1d4ed8; padding:2px 6px; border-radius:10px;">🎬 Video</span>
+              <% } %>
+            </div>
+          </td>
+          <td style="max-width:280px;">
+            <div style="font-weight:500; color:#1e293b; font-size:13px; margin-bottom:3px;"><%= b.judul %></div>
+          </td>
+          <td>
+            <span class="badge badge-green">Berita</span>
+          </td>
+          <td>
+            <span class="badge <%= b.published ? 'badge-green' : 'badge-gray' %>">
+              <%= b.published ? 'Published' : 'Draft' %>
+            </span>
+          </td>
+          <td style="color:#64748b; font-size:12px; white-space:nowrap;">
+            <%= b.published_at ? new Date(b.published_at).toLocaleDateString('id-ID', {day:'2-digit',month:'short',year:'numeric'}) : '—' %>
+          </td>
+          <td>
+            <div style="display:flex; gap:6px;">
+              <a href="/admin/berita/<%= b.id %>/edit" class="btn btn-secondary btn-sm" id="btn-edit-berita-<%= b.id %>">Edit</a>
+              <form action="/admin/berita/<%= b.id %>/hapus" method="POST" onsubmit="return confirm('Hapus berita ini?')">
+                <button type="submit" class="btn btn-danger btn-sm" id="btn-hapus-berita-<%= b.id %>">Hapus</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <% } %>
+</div>

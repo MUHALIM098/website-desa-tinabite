@@ -1,0 +1,53 @@
+<%# views/admin/galeri/form.ejs — Form Tambah/Edit Galeri %>
+
+<% if (error) { %>
+<div class="alert alert-error"><%= error %></div>
+<% } %>
+
+<form action="/admin/galeri/<%= galeri ? galeri.id + '/edit' : 'tambah' %>" method="POST" enctype="multipart/form-data">
+  <div class="admin-card" style="max-width:560px;">
+    <p class="admin-card-title">Informasi Foto</p>
+
+    <div class="form-group">
+      <label class="form-label" for="judul">Judul <span style="color:#dc2626">*</span></label>
+      <input type="text" id="judul" name="judul" class="form-control" required
+        value="<%= galeri ? galeri.judul : '' %>" placeholder="Judul foto..." />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="deskripsi">Deskripsi</label>
+      <textarea id="deskripsi" name="deskripsi" class="form-control" rows="3"
+        placeholder="Keterangan foto (opsional)..."><%= galeri ? (galeri.deskripsi || '') : '' %></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="urutan">Urutan Tampil</label>
+      <input type="number" id="urutan" name="urutan" class="form-control" min="0"
+        value="<%= galeri ? (galeri.urutan || 0) : 0 %>" style="max-width:120px;" />
+      <p class="form-hint">Angka kecil tampil lebih dulu. Default: 0</p>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="foto">
+        <%= galeri ? 'Ganti Foto' : 'Upload Foto' %>
+        <% if (!galeri) { %><span style="color:#dc2626">*</span><% } %>
+      </label>
+      <% if (galeri && galeri.foto_url) { %>
+      <div style="margin-bottom:10px;">
+        <img src="<%= galeri.foto_url %>" alt="foto" style="width:200px; border-radius:8px; object-fit:cover; max-height:140px;" />
+        <p style="font-size:11px; color:#94a3b8; margin-top:4px;">Foto saat ini. Upload baru untuk mengganti.</p>
+      </div>
+      <% } %>
+      <input type="file" id="foto" name="foto" class="form-control" accept="image/*"
+        <%= !galeri ? 'required' : '' %> style="padding:6px; font-size:12px;" />
+      <p class="form-hint">Format: JPG, PNG, WebP. Maks 5MB.</p>
+    </div>
+
+    <div style="display:flex; gap:10px; margin-top:4px;">
+      <button type="submit" class="btn btn-primary" id="btn-simpan-galeri">
+        💾 <%= galeri ? 'Simpan Perubahan' : 'Upload Foto' %>
+      </button>
+      <a href="/admin/galeri" class="btn btn-secondary">Batal</a>
+    </div>
+  </div>
+</form>

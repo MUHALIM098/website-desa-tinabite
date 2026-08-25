@@ -1,0 +1,35 @@
+<%# views/public/berita-detail.ejs — Halaman Detail Berita %>
+
+<!-- Page Header -->
+<section class="bg-gradient-to-r from-primary-700 to-primary-900 text-white py-12 px-4">
+  <div class="max-w-4xl mx-auto">
+    <p class="text-primary-200 text-sm mb-3">← <a href="/berita" class="hover:underline">Kembali ke Berita</a></p>
+    <span class="text-xs font-semibold px-3 py-1 rounded-full bg-white/20 mb-3 inline-block">
+      Berita
+    </span>
+    <h1 class="text-2xl sm:text-3xl font-bold mt-2 leading-tight"><%= berita.judul %></h1>
+    <p class="text-primary-200 text-sm mt-3"><%= formatTanggal(berita.published_at) %></p>
+  </div>
+</section>
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <article class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <% if (berita.foto_url) { %>
+      <img src="<%= berita.foto_url %>" alt="<%= berita.judul %>" class="w-full max-h-96 object-cover" />
+    <% } %>
+    <div class="p-8">
+      <% if (berita.ringkasan) { %>
+        <p class="text-gray-600 text-lg font-medium mb-6 pb-6 border-b border-gray-100 leading-relaxed"><%= berita.ringkasan %></p>
+      <% } %>
+      <div class="prose prose-gray max-w-none text-gray-700 leading-relaxed whitespace-pre-line">
+        <%= berita.konten || '' %>
+      </div>
+    </div>
+  </article>
+
+  <div class="mt-6">
+    <a href="/berita" class="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-medium text-sm">
+      ← Kembali ke daftar berita
+    </a>
+  </div>
+</div>

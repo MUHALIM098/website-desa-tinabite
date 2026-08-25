@@ -1,0 +1,175 @@
+<%# views/admin/potensi/form.ejs — Form Tambah/Edit Potensi Desa %>
+
+  <% if (error) { %>
+    <div class="alert alert-error">
+      <%= error %>
+    </div>
+    <% } %>
+
+      <% var potensiCfg={ pertanian: { icon: '🌾' , color: '#16a34a' ,
+        contoh: 'Contoh: Padi, Jagung, Singkong, Sayuran...' }, perkebunan: { icon: '🌿' , color: '#0891b2' ,
+        contoh: 'Contoh: Kakao, Kelapa, Kopi, Cengkeh...' }, peternakan: { icon: '🐄' , color: '#d97706' ,
+        contoh: 'Contoh: Sapi, Ayam, Kambing, Ikan...' }, wisata: { icon: '🏞️' , color: '#7c3aed' ,
+        contoh: 'Contoh: Air Terjun, Pantai, Budaya, Kuliner...' }, }; var katerpilih=potensi ? (potensi.kategori || ''
+        ) : '' ; var cfgTerpilih=potensiCfg[katerpilih] || null; %>
+
+        <form action="/admin/potensi/<%= potensi && potensi.id ? potensi.id + '/edit' : 'tambah' %>" method="POST"
+          enctype="multipart/form-data" id="form-potensi">
+          <div style="display:grid; grid-template-columns:1fr 300px; gap:20px; align-items:start;">
+
+            <!-- Kolom kiri: konten utama -->
+            <div style="display:flex; flex-direction:column; gap:16px;">
+
+              <div class="admin-card">
+                <p class="admin-card-title">Informasi Potensi</p>
+
+                <!-- Judul -->
+                <div class="form-group">
+                  <label class="form-label" for="judul">Judul / Nama Potensi <span
+                      style="color:#dc2626;">*</span></label>
+                  <input type="text" id="judul" name="judul" class="form-control" required maxlength="255"
+                    value="<%= potensi ? (potensi.judul || '') : '' %>"
+                    placeholder="<%= cfgTerpilih ? cfgTerpilih.contoh : 'Nama potensi desa...' %>" />
+                </div>
+
+                <!-- Deskripsi -->
+                <div class="form-group" style="margin-bottom:0;">
+                  <label class="form-label" for="deskripsi">Deskripsi <span
+                      style="font-weight:400; color:#94a3b8; font-size:11px;">(opsional)</span></label>
+                  <textarea id="deskripsi" name="deskripsi" class="form-control" rows="6"
+                    placeholder="Penjelasan lengkap tentang potensi ini..."><%= potensi ? (potensi.deskripsi || '') : '' %></textarea>
+                  <p class="form-hint">Jelaskan secara singkat dan informatif.</p>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Kolom kanan: kategori + foto + tombol -->
+            <div style="display:flex; flex-direction:column; gap:16px;">
+
+              <div class="admin-card">
+                <p class="admin-card-title">Kategori</p>
+
+                <div class="form-group">
+                  <label class="form-label" for="kategori">Kategori <span style="color:#dc2626;">*</span></label>
+                  <select id="kategori" name="kategori" class="form-control" required
+                    onchange="updateKatInfo(this.value)">
+                    <option value="">— Pilih Kategori —</option>
+                    <% POTENSI_KATEGORI.forEach(function(k) { %>
+                      <option value="<%= k.key %>" <%=(potensi && potensi.kategori===k.key) ? 'selected' : '' %>
+                        ><%= k.label %>
+                      </option>
+                      <% }); %>
+                  </select>
+                </div>
+
+                <!-- Info kategori dinamis -->
+                <div id="kat-info"
+                  style="background:#f8fafc; border-radius:8px; padding:12px; font-size:12px; color:#64748b; display:<%= cfgTerpilih ? 'block' : 'none' %>;">
+                  <span id="kat-icon" style="font-size:18px; margin-right:6px;">
+                    <%= cfgTerpilih ? cfgTerpilih.icon : '' %>
+                  </span>
+                  <span id="kat-desc">
+                    <%= cfgTerpilih ? cfgTerpilih.contoh : '' %>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Foto (opsional) -->
+              <div class="admin-card">
+                <p class="admin-card-title">Foto <span
+                    style="font-weight:400; font-size:12px; color:#94a3b8;">(opsional)</span></p>
+
+                <% if (potensi && potensi.foto_url) { %>
+                  <div id="foto-existing" style="margin-bottom:10px; text-align:center;">
+                    <img src="<%= potensi.foto_url %>" alt="foto"
+                      style="width:100%; border-radius:8px; object-fit:cover; max-height:140px;" />
+                    <p style="font-size:11px; color:#94a3b8; margin:4px 0 6px;">Foto saat ini</p>
+                    <label
+                      style="display:inline-flex; align-items:center; gap:6px; font-size:12px; color:#dc2626; cursor:pointer;">
+                      <input type="checkbox" name="hapus_foto" value="1" onchange="toggleHapusFoto(this)" />
+                      Hapus foto ini
+                    </label>
+                  </div>
+                  <% } %>
+
+                    <% if (!potensi || !potensi.foto_url) { %>
+                      <div id="foto-preview-wrap" style="display:none; margin-bottom:10px; text-align:center;">
+                        <img id="foto-preview-img" src="" alt="Preview"
+                          style="width:100%; border-radius:8px; object-fit:cover; max-height:140px;" />
+                      </div>
+                      <% } %>
+
+                        <input type="file" id="foto" name="foto" class="form-control" accept="image/*"
+                          style="padding:6px; font-size:12px;" onchange="previewFoto(this)" />
+                        <p class="form-hint">JPG, PNG, WebP. Maks 20MB. Card tetap tampil jika kosong.</p>
+              </div>
+
+              <!-- Tombol -->
+              <div style="display:flex; gap:10px;">
+                <button type="submit" class="btn btn-primary" id="btn-simpan-potensi" style="flex:1;">
+                  💾 <%= (potensi && potensi.id) ? 'Simpan Perubahan' : 'Tambah Potensi' %>
+                </button>
+                <a href="/admin/potensi" class="btn btn-secondary">Batal</a>
+              </div>
+
+            </div>
+          </div>
+        </form>
+
+        <script>
+          var katData = {
+            pertanian: { icon: '🌾', desc: 'Contoh: Padi, Jagung, Singkong, Sayuran...' },
+            perkebunan: { icon: '🌿', desc: 'Contoh: Kakao, Kelapa, Kopi, Cengkeh...' },
+            peternakan: { icon: '🐄', desc: 'Contoh: Sapi, Ayam, Kambing, Ikan...' },
+            wisata: { icon: '🏞️', desc: 'Contoh: Air Terjun, Pantai, Budaya, Kuliner...' },
+          };
+
+          function updateKatInfo(val) {
+            var info = document.getElementById('kat-info');
+            var icon = document.getElementById('kat-icon');
+            var desc = document.getElementById('kat-desc');
+            var input = document.getElementById('judul');
+            if (katData[val]) {
+              icon.textContent = katData[val].icon;
+              desc.textContent = katData[val].desc;
+              info.style.display = 'block';
+              if (input && !input.value) input.placeholder = katData[val].desc;
+            } else {
+              info.style.display = 'none';
+            }
+          }
+
+          function previewFoto(input) {
+            if (!input.files || !input.files[0]) return;
+            var wrap = document.getElementById('foto-preview-wrap');
+            var img = document.getElementById('foto-preview-img');
+            if (img) {
+              img.src = URL.createObjectURL(input.files[0]);
+              if (wrap) wrap.style.display = 'block';
+            }
+          }
+
+          function toggleHapusFoto(cb) {
+            var wrap = document.getElementById('foto-existing');
+            var inp = document.getElementById('foto');
+            if (wrap) wrap.style.opacity = cb.checked ? '0.4' : '1';
+            if (inp) inp.disabled = cb.checked;
+          }
+
+          document.getElementById('form-potensi').addEventListener('submit', function (e) {
+            var judul = document.getElementById('judul').value.trim();
+            var kategori = document.getElementById('kategori').value;
+            if (!judul) {
+              e.preventDefault();
+              alert('Judul wajib diisi.');
+              document.getElementById('judul').focus();
+              return;
+            }
+            if (!kategori) {
+              e.preventDefault();
+              alert('Pilih kategori terlebih dahulu.');
+              document.getElementById('kategori').focus();
+            }
+          });
+        </script>

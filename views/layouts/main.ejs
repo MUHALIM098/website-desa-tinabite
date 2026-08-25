@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Website Resmi Desa Tinabite, Kecamatan Lantari Jaya, Kabupaten Bombana, Sulawesi Tenggara." />
+  <title>
+    <%= typeof title !=='undefined' ? title : 'Website Desa Tinabite' %>
+  </title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+
+  <style>
+    /* ================================================================
+       BACKGROUND GLOBAL — URL dikontrol via Supabase
+       Tabel: profil_desa | kunci: background_website
+       Diambil oleh middleware di app.js, disimpan ke res.locals.backgroundUrl
+       Fallback: /images/desa-tinabite-bg.jpg
+    ================================================================ */
+
+    body {
+      font-family: 'Inter', sans-serif;
+      /* Putih bersih sebagai base — background foto hanya di hero */
+      background: #f8fafc;
+      margin: 0;
+    }
+
+    /* ── Navbar: putih solid, shadow ringan, sticky ── */
+    header {
+      background: #fff !important;
+      box-shadow: 0 1px 0 #e2e8f0 !important;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    /* ── CSS variable background URL — ditulis via inline <style> di bawah ── */
+    :root {
+      --bg-url: url('<%- typeof backgroundUrl !== "undefined" ? backgroundUrl : "/images/desa-tinabite-bg.jpg" %>');
+    }
+
+    /* ── Header halaman internal (section judul hijau) ── */
+    /* Semua halaman internal menggunakan gradient hijau di atas gambar latar */
+    .page-header-bg {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-header-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: var(--bg-url);
+      background-size: cover;
+      background-position: center 40%;
+      background-repeat: no-repeat;
+      opacity: 0.18;
+      z-index: 0;
+    }
+
+    .page-header-bg>* {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Konten halaman: putih solid di atas background ── */
+    .bg-white {
+      background-color: #fff !important;
+    }
+
+    .bg-gray-50 {
+      background-color: #f8fafc !important;
+    }
+
+    /* ── Section header gradient (bg-gradient-to-r from-primary-*) ── */
+    /* Tetap tampil solid dengan gradient hijau, bukan foto */
+  </style>
+</head>
+
+<body class="font-sans text-gray-800 min-h-screen flex flex-col">
+
+  <%- include('../partials/header') %>
+
+    <main class="flex-1">
+      <%- body %>
+    </main>
+
+    <%- include('../partials/footer') %>
+
+      <script src="/js/main.js"></script>
+</body>
+
+</html>

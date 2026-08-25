@@ -1,0 +1,49 @@
+<!-- views/partials/footer.ejs — Footer website -->
+<footer class="bg-gray-800 text-gray-300 mt-auto">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+      <!-- Kolom 1: Identitas Desa -->
+      <div>
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white text-sm font-bold">T</div>
+          <span class="font-bold text-white text-lg">Desa Tinabite</span>
+        </div>
+        <p class="text-sm leading-relaxed text-gray-400">
+          Kecamatan Lantari Jaya<br />
+          Kabupaten Bombana<br />
+          Sulawesi Tenggara
+        </p>
+      </div>
+
+      <!-- Kolom 2: Tautan Cepat -->
+      <div>
+        <h3 class="font-semibold text-white mb-3 text-sm uppercase tracking-wide">Tautan Cepat</h3>
+        <ul class="space-y-2 text-sm">
+          <li><a href="/profil" class="hover:text-primary-400 transition-colors">Profil Desa</a></li>
+          <li><a href="/pemerintahan" class="hover:text-primary-400 transition-colors">Pemerintahan</a></li>
+          <li><a href="/berita" class="hover:text-primary-400 transition-colors">Berita & Pengumuman</a></li>
+          <li><a href="/galeri" class="hover:text-primary-400 transition-colors">Galeri</a></li>
+          <li><a href="/kontak" class="hover:text-primary-400 transition-colors">Kontak</a></li>
+        </ul>
+      </div>
+
+      <!-- Kolom 3: Kontak -->
+      <div>
+        <h3 class="font-semibold text-white mb-3 text-sm uppercase tracking-wide">Kontak</h3>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <!-- TODO: Isi dengan informasi kontak asli desa -->
+          <li>📍 Desa Tinabite, Kec. Lantari Jaya</li>
+          <li>📞 <span class="italic">(belum tersedia)</span></li>
+          <li>✉️ <span class="italic">(belum tersedia)</span></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="border-t border-gray-700 mt-8 pt-6 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-gray-500">
+      <p>&copy; <%= new Date().getFullYear() %> Desa Tinabite. Hak Cipta Dilindungi.</p>
+      <p>Dibuat dengan ❤️ oleh Tim KKN Desa Tinabite</p>
+    </div>
+  </div>
+</footer>

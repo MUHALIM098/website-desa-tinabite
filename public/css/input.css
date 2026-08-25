@@ -1,0 +1,37 @@
+/*
+ * public/css/input.css — Source CSS untuk Tailwind CSS v3
+ *
+ * File ini adalah INPUT untuk Tailwind CLI.
+ * Jangan edit file style.css langsung — edit file ini, lalu jalankan:
+ *   npm run build:css
+ *
+ * Tambahkan custom CSS di bawah directive Tailwind jika diperlukan.
+ */
+
+/* Directive wajib Tailwind v3 */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Custom base styles
+   ============================================================ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+/* ============================================================
+   Custom component classes
+   ============================================================ */
+@layer components {
+  /* Container standar */
+  .container-main {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
