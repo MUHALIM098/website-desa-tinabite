@@ -1,516 +1,734 @@
 <%# views/public/home.ejs — Halaman Beranda %>
 
-<style>
-/* ════════════════════════════════════════════════════
+  <style>
+    /* ════════════════════════════════════════════════════
    HOME PAGE STYLES — Desa Tinabite
 ════════════════════════════════════════════════════ */
 
-/* ── HERO ── */
-.hero {
-  position: relative;
-  width: 100%;
-  height: 580px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-}
-@media(max-width:768px){ .hero { height: 460px; } }
-@media(max-width:480px){ .hero { height: 380px; } }
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 580px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
 
-.hero-img {
-  position: absolute;
-  inset: 0;
-  background-image: var(--bg-url);
-  background-size: cover;
-  background-position: center 40%;
-  background-repeat: no-repeat;
-  width: 100%;
-  height: 100%;
-  transform: scale(1.04);
-  transition: transform 10s ease;
-}
-.hero:hover .hero-img { transform: scale(1.0); }
+    @media(max-width:768px) {
+      .hero {
+        height: 460px;
+      }
+    }
 
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    105deg,
-    rgba(0,20,8,0.72) 0%,
-    rgba(0,30,12,0.52) 55%,
-    rgba(0,0,0,0.18) 100%
-  );
-}
+    @media(max-width:480px) {
+      .hero {
+        height: 380px;
+      }
+    }
 
-.hero-body {
-  position: relative;
-  z-index: 2;
-  max-width: 1280px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 0 32px;
-}
-@media(max-width:640px){ .hero-body { padding: 0 20px; } }
+    .hero-img {
+      position: absolute;
+      inset: 0;
+      background-image: var(--bg-url);
+      background-size: cover;
+      background-position: center 40%;
+      background-repeat: no-repeat;
+      width: 100%;
+      height: 100%;
+      transform: scale(1.04);
+      transition: transform 10s ease;
+    }
 
-.hero-eyebrow {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  color: #86efac;
-  background: rgba(255,255,255,.08);
-  border: 1px solid rgba(134,239,172,.35);
-  padding: 5px 16px;
-  border-radius: 99px;
-  margin-bottom: 18px;
-}
+    .hero:hover .hero-img {
+      transform: scale(1.0);
+    }
 
-.hero-title {
-  font-size: clamp(2rem, 5.5vw, 3.6rem);
-  font-weight: 800;
-  color: #fff;
-  line-height: 1.12;
-  margin: 0 0 14px;
-  text-shadow: 0 2px 20px rgba(0,0,0,.4);
-  max-width: 640px;
-}
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg,
+          rgba(0, 20, 8, 0.72) 0%,
+          rgba(0, 30, 12, 0.52) 55%,
+          rgba(0, 0, 0, 0.18) 100%);
+    }
 
-.hero-loc {
-  font-size: clamp(.85rem, 2vw, 1rem);
-  color: rgba(255,255,255,.75);
-  margin: 0 0 10px;
-  font-weight: 400;
-}
+    .hero-body {
+      position: relative;
+      z-index: 2;
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
 
-.hero-tagline {
-  font-size: clamp(.85rem, 1.8vw, 1.05rem);
-  color: rgba(255,255,255,.65);
-  font-style: italic;
-  margin: 0 0 30px;
-  max-width: 500px;
-  line-height: 1.6;
-}
+    @media(max-width:640px) {
+      .hero-body {
+        padding: 0 20px;
+      }
+    }
 
-.hero-btn {
-  display: inline-block;
-  background: #16a34a;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 700;
-  padding: 13px 28px;
-  border-radius: 10px;
-  text-decoration: none;
-  border: 2px solid #16a34a;
-  transition: background .18s, transform .18s;
-}
-.hero-btn:hover { background: #15803d; border-color: #15803d; transform: translateY(-2px); }
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: #86efac;
+      background: rgba(255, 255, 255, .08);
+      border: 1px solid rgba(134, 239, 172, .35);
+      padding: 5px 16px;
+      border-radius: 99px;
+      margin-bottom: 18px;
+    }
 
-/* Scroll cue */
-.hero-scroll-cue {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 3;
-  color: rgba(255,255,255,.45);
-  font-size: 11px;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  animation: cue-bounce 2.2s infinite;
-}
-.hero-scroll-cue svg { width: 16px; height: 16px; }
-@keyframes cue-bounce {
-  0%,100%{ transform: translateX(-50%) translateY(0); }
-  50%    { transform: translateX(-50%) translateY(7px); }
-}
+    .hero-title {
+      font-size: clamp(2rem, 5.5vw, 3.6rem);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.12;
+      margin: 0 0 14px;
+      text-shadow: 0 2px 20px rgba(0, 0, 0, .4);
+      max-width: 640px;
+    }
 
-/* ── CARD GRID (menimpa bawah hero) ── */
-.cards-wrap {
-  position: relative;
-  z-index: 10;
-  max-width: 1200px;
-  margin: -72px auto 0;
-  padding: 0 24px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-}
-@media(max-width:900px) { .cards-wrap { grid-template-columns: repeat(2,1fr); margin-top: -40px; } }
-@media(max-width:480px) { .cards-wrap { grid-template-columns: 1fr; margin-top: 0; } }
+    .hero-loc {
+      font-size: clamp(.85rem, 2vw, 1rem);
+      color: rgba(255, 255, 255, .75);
+      margin: 0 0 10px;
+      font-weight: 400;
+    }
 
-.info-card {
-  background: #fff;
-  border-radius: 16px;
-  padding: 22px 20px 20px;
-  box-shadow: 0 4px 24px rgba(0,0,0,.10);
-  border: 1px solid #f0fdf4;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  transition: transform .18s, box-shadow .18s;
-  text-decoration: none;
-  color: inherit;
-}
-.info-card:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(0,0,0,.13); }
+    .hero-tagline {
+      font-size: clamp(.85rem, 1.8vw, 1.05rem);
+      color: rgba(255, 255, 255, .65);
+      font-style: italic;
+      margin: 0 0 30px;
+      max-width: 500px;
+      line-height: 1.6;
+    }
 
-.info-card-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 11px;
-  background: #f0fdf4;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  margin-bottom: 4px;
-  flex-shrink: 0;
-}
+    .hero-btn {
+      display: inline-block;
+      background: #16a34a;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 13px 28px;
+      border-radius: 10px;
+      text-decoration: none;
+      border: 2px solid #16a34a;
+      transition: background .18s, transform .18s;
+    }
 
-.info-card-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: #1e293b;
-  margin: 0;
-}
+    .hero-btn:hover {
+      background: #15803d;
+      border-color: #15803d;
+      transform: translateY(-2px);
+    }
 
-.info-card-desc {
-  font-size: 12px;
-  color: #64748b;
-  line-height: 1.55;
-  margin: 0;
-  flex: 1;
-}
+    /* Scroll cue */
+    .hero-scroll-cue {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      color: rgba(255, 255, 255, .45);
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      animation: cue-bounce 2.2s infinite;
+    }
 
-.info-card-link {
-  font-size: 12px;
-  font-weight: 600;
-  color: #16a34a;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-top: 4px;
-}
+    .hero-scroll-cue svg {
+      width: 16px;
+      height: 16px;
+    }
 
-/* ── SECTIONS ── */
-.home-section {
-  padding: 72px 0;
-  background: #fff;
-}
-.home-section.gray { background: #f8fafc; }
-.home-container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    @keyframes cue-bounce {
 
-.sec-eyebrow {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: #16a34a;
-  margin-bottom: 8px;
-}
-.sec-title {
-  font-size: clamp(1.4rem, 3vw, 2rem);
-  font-weight: 800;
-  color: #1e293b;
-  margin: 0 0 8px;
-}
-.sec-sub { font-size: 14px; color: #64748b; margin: 0; }
+      0%,
+      100% {
+        transform: translateX(-50%) translateY(0);
+      }
 
-/* ── STATISTIK GRID ── */
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-  margin-top: 32px;
-}
-@media(max-width:768px){ .stat-grid { grid-template-columns: repeat(2,1fr); } }
-@media(max-width:400px){ .stat-grid { grid-template-columns: 1fr; } }
+      50% {
+        transform: translateX(-50%) translateY(7px);
+      }
+    }
 
-.stat-card {
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  padding: 20px 18px;
-  text-align: center;
-  box-shadow: 0 1px 4px rgba(0,0,0,.04);
-}
-.stat-num  { font-size: 1.9rem; font-weight: 800; color: #16a34a; line-height: 1; margin-bottom: 5px; }
-.stat-sat  { font-size: 11px; color: #94a3b8; }
-.stat-lbl  { font-size: 13px; color: #64748b; margin-top: 4px; font-weight: 500; }
+    /* ── CARD GRID (menimpa bawah hero) ── */
+    .cards-wrap {
+      position: relative;
+      z-index: 10;
+      max-width: 1200px;
+      margin: -72px auto 0;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
 
-/* ── MAPS ── */
-.maps-embed {
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid #e2e8f0;
-  margin-top: 28px;
-}
-.maps-embed iframe { display: block; width: 100%; height: 380px; border: none; }
-@media(max-width:640px){ .maps-embed iframe { height: 240px; } }
+    @media(max-width:900px) {
+      .cards-wrap {
+        grid-template-columns: repeat(2, 1fr);
+        margin-top: -40px;
+      }
+    }
 
-/* ── BERITA GRID ── */
-.berita-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 22px;
-  margin-top: 32px;
-}
-@media(max-width:900px){ .berita-grid { grid-template-columns: repeat(2,1fr); } }
-@media(max-width:540px){ .berita-grid { grid-template-columns: 1fr; } }
+    @media(max-width:480px) {
+      .cards-wrap {
+        grid-template-columns: 1fr;
+        margin-top: 0;
+      }
+    }
 
-.berita-card {
-  background: #fff;
-  border-radius: 14px;
-  border: 1px solid #e2e8f0;
-  overflow: hidden;
-  text-decoration: none;
-  display: block;
-  transition: box-shadow .18s, transform .18s;
-}
-.berita-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,.10); transform: translateY(-4px); }
+    .info-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 22px 20px 20px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, .10);
+      border: 1px solid #f0fdf4;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: transform .18s, box-shadow .18s;
+      text-decoration: none;
+      color: inherit;
+    }
 
-.berita-img { width: 100%; height: 180px; object-fit: cover; display: block; }
-.berita-no-img {
-  width: 100%; height: 180px;
-  background: linear-gradient(135deg,#f0fdf4,#dcfce7);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 2.5rem;
-}
-.berita-body { padding: 16px 18px 18px; }
-.berita-kat {
-  font-size: 10px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: .07em; background: #dcfce7; color: #16a34a;
-  padding: 2px 9px; border-radius: 99px;
-}
-.berita-judul {
-  font-size: 14px; font-weight: 700; color: #1e293b;
-  margin: 9px 0 6px; line-height: 1.4;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-}
-.berita-tgl { font-size: 11px; color: #94a3b8; }
+    .info-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, .13);
+    }
 
-/* ── TENTANG DESA (2-col) ── */
-.tentang-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
-  align-items: center;
-}
-@media(max-width:768px){ .tentang-grid { grid-template-columns: 1fr; gap: 28px; } }
+    .info-card-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      background: #f0fdf4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 4px;
+      flex-shrink: 0;
+    }
 
-.tentang-img-wrap {
-  border-radius: 16px;
-  overflow: hidden;
-  height: 320px;
-}
-.tentang-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
-.tentang-img-ph {
-  width: 100%; height: 320px;
-  background: linear-gradient(135deg,#f0fdf4,#dcfce7);
-  border-radius: 16px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 5rem;
-}
+    .info-card-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0;
+    }
 
-.tentang-lbl {
-  font-size: 11px; font-weight: 700; letter-spacing: .12em;
-  text-transform: uppercase; color: #16a34a; margin-bottom: 10px;
-}
-.tentang-title { font-size: clamp(1.4rem,3vw,2rem); font-weight: 800; color: #1e293b; margin: 0 0 14px; }
-.tentang-text { font-size: 14px; color: #4b5563; line-height: 1.8; margin: 0 0 24px; }
-.tentang-btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: #16a34a; color: #fff;
-  font-size: 13px; font-weight: 700;
-  padding: 11px 22px; border-radius: 9px;
-  text-decoration: none; transition: background .15s;
-}
-.tentang-btn:hover { background: #15803d; }
+    .info-card-desc {
+      font-size: 12px;
+      color: #64748b;
+      line-height: 1.55;
+      margin: 0;
+      flex: 1;
+    }
 
-/* ── SECTION HEADER + LIHAT SEMUA ── */
-.sec-row {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 4px;
-}
-.sec-all-link {
-  font-size: 13px; font-weight: 600; color: #16a34a;
-  text-decoration: none; padding: 7px 16px;
-  border: 1.5px solid #16a34a; border-radius: 8px;
-  transition: background .15s; white-space: nowrap;
-}
-.sec-all-link:hover { background: #f0fdf4; }
-</style>
+    .info-card-link {
+      font-size: 12px;
+      font-weight: 600;
+      color: #16a34a;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 4px;
+    }
 
-<!-- ════════════════════════════ HERO ════════════════════════════ -->
-<section class="hero">
-  <div class="hero-img"></div>
-  <div class="hero-overlay"></div>
+    /* ── SECTIONS ── */
+    .home-section {
+      padding: 72px 0;
+      background: #fff;
+    }
 
-  <div class="hero-body">
-    <span class="hero-eyebrow">Website Resmi Desa</span>
-    <h1 class="hero-title">Selamat Datang di<br>Desa Tinabite</h1>
-    <p class="hero-loc">Kecamatan Lantari Jaya, Kabupaten Bombana, Sulawesi Tenggara</p>
-    <p class="hero-tagline">Mewujudkan Desa Tinabite yang maju, mandiri, sejahtera,<br>dan berdaya melalui pembangunan yang berkelanjutan.</p>
-    <a href="/profil" class="hero-btn">Selengkapnya Tentang Desa &rarr;</a>
+    .home-section.gray {
+      background: #f8fafc;
+    }
+
+    .home-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .sec-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #16a34a;
+      margin-bottom: 8px;
+    }
+
+    .sec-title {
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 800;
+      color: #1e293b;
+      margin: 0 0 8px;
+    }
+
+    .sec-sub {
+      font-size: 14px;
+      color: #64748b;
+      margin: 0;
+    }
+
+    /* ── STATISTIK GRID ── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 32px;
+    }
+
+    @media(max-width:768px) {
+      .stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media(max-width:400px) {
+      .stat-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .stat-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 20px 18px;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, .04);
+    }
+
+    .stat-num {
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: #16a34a;
+      line-height: 1;
+      margin-bottom: 5px;
+    }
+
+    .stat-sat {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    .stat-lbl {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    /* ── MAPS ── */
+    .maps-embed {
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      margin-top: 28px;
+    }
+
+    .maps-embed iframe {
+      display: block;
+      width: 100%;
+      height: 380px;
+      border: none;
+    }
+
+    @media(max-width:640px) {
+      .maps-embed iframe {
+        height: 240px;
+      }
+    }
+
+    /* ── BERITA GRID ── */
+    .berita-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      margin-top: 32px;
+    }
+
+    @media(max-width:900px) {
+      .berita-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media(max-width:540px) {
+      .berita-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .berita-card {
+      background: #fff;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+      text-decoration: none;
+      display: block;
+      transition: box-shadow .18s, transform .18s;
+    }
+
+    .berita-card:hover {
+      box-shadow: 0 8px 28px rgba(0, 0, 0, .10);
+      transform: translateY(-4px);
+    }
+
+    .berita-img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .berita-no-img {
+      width: 100%;
+      height: 180px;
+      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+    }
+
+    .berita-body {
+      padding: 16px 18px 18px;
+    }
+
+    .berita-kat {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      background: #dcfce7;
+      color: #16a34a;
+      padding: 2px 9px;
+      border-radius: 99px;
+    }
+
+    .berita-judul {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 9px 0 6px;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .berita-tgl {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    /* ── TENTANG DESA (2-col) ── */
+    .tentang-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    @media(max-width:768px) {
+      .tentang-grid {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+    }
+
+    .tentang-img-wrap {
+      border-radius: 16px;
+      overflow: hidden;
+      height: 320px;
+    }
+
+    .tentang-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .tentang-img-ph {
+      width: 100%;
+      height: 320px;
+      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+    }
+
+    .tentang-lbl {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #16a34a;
+      margin-bottom: 10px;
+    }
+
+    .tentang-title {
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 800;
+      color: #1e293b;
+      margin: 0 0 14px;
+    }
+
+    .tentang-text {
+      font-size: 14px;
+      color: #4b5563;
+      line-height: 1.8;
+      margin: 0 0 24px;
+    }
+
+    .tentang-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #16a34a;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 11px 22px;
+      border-radius: 9px;
+      text-decoration: none;
+      transition: background .15s;
+    }
+
+    .tentang-btn:hover {
+      background: #15803d;
+    }
+
+    /* ── SECTION HEADER + LIHAT SEMUA ── */
+    .sec-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+
+    .sec-all-link {
+      font-size: 13px;
+      font-weight: 600;
+      color: #16a34a;
+      text-decoration: none;
+      padding: 7px 16px;
+      border: 1.5px solid #16a34a;
+      border-radius: 8px;
+      transition: background .15s;
+      white-space: nowrap;
+    }
+
+    .sec-all-link:hover {
+      background: #f0fdf4;
+    }
+  </style>
+
+  <!-- ════════════════════════════ HERO ════════════════════════════ -->
+  <section class="hero">
+    <div class="hero-img"></div>
+    <div class="hero-overlay"></div>
+
+    <div class="hero-body">
+      <span class="hero-eyebrow">Website Resmi Desa</span>
+      <h1 class="hero-title">Selamat Datang di<br>Desa Tinabite</h1>
+      <p class="hero-loc">Kecamatan Lantari Jaya, Kabupaten Bombana, Sulawesi Tenggara</p>
+      <p class="hero-tagline">Mewujudkan Desa Tinabite yang maju, mandiri, sejahtera,<br>dan berdaya melalui pembangunan
+        yang berkelanjutan.</p>
+      <a href="/profil" class="hero-btn">Selengkapnya Tentang Desa &rarr;</a>
+    </div>
+
+    <div class="hero-scroll-cue">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+      </svg>
+      scroll
+    </div>
+  </section>
+
+  <!-- ════════════════════════════ 4 CARD (menimpa hero) ════════════════════════════ -->
+  <div class="cards-wrap">
+
+    <a href="/pemerintahan" class="info-card">
+      <div class="info-card-icon">&#127963;</div>
+      <p class="info-card-title">Pemerintahan Desa</p>
+      <p class="info-card-desc">Struktur organisasi dan perangkat Desa Tinabite.</p>
+      <span class="info-card-link">Lihat Selengkapnya &#8594;</span>
+    </a>
+
+    <a href="/potensi" class="info-card">
+      <div class="info-card-icon">&#127806;</div>
+      <p class="info-card-title">Potensi Desa</p>
+      <p class="info-card-desc">Potensi unggulan pertanian, perkebunan, dan wisata desa.</p>
+      <span class="info-card-link">Lihat Selengkapnya &#8594;</span>
+    </a>
+
+    <a href="/berita" class="info-card">
+      <div class="info-card-icon">&#128240;</div>
+      <p class="info-card-title">Berita &amp; Pengumuman</p>
+      <p class="info-card-desc">Informasi terbaru dan pengumuman resmi Desa Tinabite.</p>
+      <span class="info-card-link">Lihat Selengkapnya &#8594;</span>
+    </a>
+
+    <a href="/galeri" class="info-card">
+      <div class="info-card-icon">&#128247;</div>
+      <p class="info-card-title">Galeri Foto</p>
+      <p class="info-card-desc">Dokumentasi kegiatan dan kehidupan Desa Tinabite.</p>
+      <span class="info-card-link">Lihat Selengkapnya &#8594;</span>
+    </a>
+
   </div>
 
-  <div class="hero-scroll-cue">
-    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-    </svg>
-    scroll
-  </div>
-</section>
+  <!-- ════════════════════════════ TENTANG DESA ════════════════════════════ -->
+  <section class="home-section" style="padding-top:96px;">
+    <div class="home-container">
+      <div class="tentang-grid" style="grid-template-columns:1fr;">
 
-<!-- ════════════════════════════ 4 CARD (menimpa hero) ════════════════════════════ -->
-<div class="cards-wrap">
-
-  <a href="/pemerintahan" class="info-card">
-    <div class="info-card-icon">&#127963;</div>
-    <p class="info-card-title">Pemerintahan Desa</p>
-    <p class="info-card-desc">Struktur organisasi dan perangkat Desa Tinabite.</p>
-    <span class="info-card-link">Lihat Selengkapnya &#8594;</span>
-  </a>
-
-  <a href="/potensi" class="info-card">
-    <div class="info-card-icon">&#127806;</div>
-    <p class="info-card-title">Potensi Desa</p>
-    <p class="info-card-desc">Potensi unggulan pertanian, perkebunan, dan wisata desa.</p>
-    <span class="info-card-link">Lihat Selengkapnya &#8594;</span>
-  </a>
-
-  <a href="/berita" class="info-card">
-    <div class="info-card-icon">&#128240;</div>
-    <p class="info-card-title">Berita &amp; Pengumuman</p>
-    <p class="info-card-desc">Informasi terbaru dan pengumuman resmi Desa Tinabite.</p>
-    <span class="info-card-link">Lihat Selengkapnya &#8594;</span>
-  </a>
-
-  <a href="/galeri" class="info-card">
-    <div class="info-card-icon">&#128247;</div>
-    <p class="info-card-title">Galeri Foto</p>
-    <p class="info-card-desc">Dokumentasi kegiatan dan kehidupan Desa Tinabite.</p>
-    <span class="info-card-link">Lihat Selengkapnya &#8594;</span>
-  </a>
-
-</div>
-
-<!-- ════════════════════════════ TENTANG DESA ════════════════════════════ -->
-<section class="home-section" style="padding-top:96px;">
-  <div class="home-container">
-    <div class="tentang-grid">
-
-      <div class="tentang-img-ph">&#127959;</div>
-
-      <div>
-        <p class="tentang-lbl">Profil Singkat</p>
-        <h2 class="tentang-title">Tentang Desa Tinabite</h2>
-        <% if (sejarahSingkat) { %>
-        <p class="tentang-text"><%= sejarahSingkat %><% if (sejarahSingkat.length >= 300) { %>...<% } %></p>
-        <% } else { %>
-        <p class="tentang-text">Desa Tinabite merupakan desa yang terletak di Kecamatan Lantari Jaya, Kabupaten Bombana, Provinsi Sulawesi Tenggara. Desa ini terus berkembang dengan semangat kebersamaan seluruh warga.</p>
-        <% } %>
-        <a href="/profil" class="tentang-btn">&#128220; Profil Desa Lengkap</a>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- ════════════════════════════ STATISTIK ════════════════════════════ -->
-<section class="home-section gray">
-  <div class="home-container">
-    <div style="text-align:center; margin-bottom:0;">
-      <p class="sec-eyebrow">Data Desa</p>
-      <h2 class="sec-title">Statistik Desa Tinabite</h2>
-      <p class="sec-sub">Data resmi yang tersedia dari sistem administrasi desa</p>
-    </div>
-
-    <% if (statistik.length > 0) { %>
-    <div class="stat-grid">
-      <% statistik.forEach(function(s) { %>
-      <div class="stat-card">
-        <div class="stat-num"><%= s.nilai %></div>
-        <div class="stat-sat"><%= s.satuan || '' %></div>
-        <div class="stat-lbl"><%= s.label %></div>
-      </div>
-      <% }); %>
-    </div>
-    <% } else { %>
-    <div style="text-align:center; padding:40px 20px; color:#94a3b8; background:#fff; border-radius:14px; margin-top:28px; border:2px dashed #e2e8f0;">
-      <p style="font-size:28px; margin-bottom:8px;">&#128202;</p>
-      <p style="font-size:14px; font-weight:600; color:#64748b; margin-bottom:4px;">Data statistik belum tersedia</p>
-      <p style="font-size:12px;">Isi melalui Supabase Table Editor pada tabel <code style="background:#f1f5f9; padding:1px 6px; border-radius:4px;">statistik_desa</code></p>
-    </div>
-    <% } %>
-  </div>
-</section>
-
-<!-- ════════════════════════════ LOKASI / MAPS ════════════════════════════ -->
-<section class="home-section">
-  <div class="home-container">
-    <div style="text-align:center; margin-bottom:0;">
-      <p class="sec-eyebrow">Lokasi</p>
-      <h2 class="sec-title">Peta Desa Tinabite</h2>
-      <p class="sec-sub">Kec. Lantari Jaya, Kab. Bombana, Sulawesi Tenggara</p>
-    </div>
-
-    <% if (mapsUrl) { %>
-    <div class="maps-embed">
-      <iframe src="<%= mapsUrl %>" title="Peta Desa Tinabite" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    </div>
-    <% } else { %>
-    <div style="text-align:center; padding:40px 20px; color:#94a3b8; background:#f8fafc; border-radius:14px; margin-top:28px; border:2px dashed #e2e8f0;">
-      <p style="font-size:28px; margin-bottom:8px;">&#128506;</p>
-      <p style="font-size:14px; font-weight:600; color:#64748b; margin-bottom:4px;">Peta belum dikonfigurasi</p>
-      <p style="font-size:12px;">Isi kunci <code style="background:#f1f5f9; padding:1px 6px; border-radius:4px;">maps</code> di tabel profil_desa dengan URL embed Google Maps</p>
-    </div>
-    <% } %>
-  </div>
-</section>
-
-<!-- ════════════════════════════ BERITA TERBARU ════════════════════════════ -->
-<section class="home-section gray">
-  <div class="home-container">
-    <div class="sec-row">
-      <div>
-        <p class="sec-eyebrow">Informasi Terkini</p>
-        <h2 class="sec-title">Berita Terbaru</h2>
-      </div>
-      <a href="/berita" class="sec-all-link">Lihat Semua &rarr;</a>
-    </div>
-
-    <% if (beritaTerbaru.length === 0) { %>
-    <div style="text-align:center; padding:48px 20px; color:#94a3b8; background:#fff; border-radius:14px; margin-top:28px; border:2px dashed #e2e8f0;">
-      <p style="font-size:32px; margin-bottom:10px;">&#128240;</p>
-      <p style="font-size:14px; font-weight:600; color:#64748b;">Belum ada berita yang dipublikasikan.</p>
-    </div>
-    <% } else { %>
-    <div class="berita-grid">
-      <% beritaTerbaru.forEach(function(b) { %>
-      <a href="/berita/<%= b.slug %>" class="berita-card">
-        <% if (b.foto_url) { %>
-        <img src="<%= b.foto_url %>" alt="<%= b.judul %>" class="berita-img" loading="lazy" />
-        <% } else { %>
-        <div class="berita-no-img">&#128240;</div>
-        <% } %>
-        <div class="berita-body">
-          <span class="berita-kat"><%= b.kategori || 'Berita' %></span>
-          <h3 class="berita-judul"><%= b.judul %></h3>
-          <p class="berita-tgl"><%= formatTanggal(b.published_at) %></p>
+        <div>
+          <p class="tentang-lbl">Profil Singkat</p>
+          <h2 class="tentang-title">Tentang Desa Tinabite</h2>
+          <% if (sejarahSingkat) { %>
+            <p class="tentang-text">
+              <%= sejarahSingkat %>
+                <% if (sejarahSingkat.length>= 300) { %>...<% } %>
+            </p>
+            <% } else { %>
+              <p class="tentang-text">Desa Tinabite merupakan desa yang terletak di Kecamatan Lantari Jaya, Kabupaten
+                Bombana, Provinsi Sulawesi Tenggara. Desa ini terus berkembang dengan semangat kebersamaan seluruh
+                warga.</p>
+              <% } %>
+                <a href="/profil" class="tentang-btn">&#128220; Profil Desa Lengkap</a>
         </div>
-      </a>
-      <% }); %>
+
+      </div>
     </div>
-    <% } %>
-  </div>
-</section>
+  </section>
+
+  <!-- ════════════════════════════ STATISTIK ════════════════════════════ -->
+  <section class="home-section gray">
+    <div class="home-container">
+      <div style="text-align:center; margin-bottom:0;">
+        <p class="sec-eyebrow">Data Desa</p>
+        <h2 class="sec-title">Statistik Desa Tinabite</h2>
+        <p class="sec-sub">Data resmi yang tersedia dari sistem administrasi desa</p>
+      </div>
+
+      <% if (statistik.length> 0) { %>
+        <div class="stat-grid">
+          <% statistik.forEach(function(s) { %>
+            <div class="stat-card">
+              <div class="stat-num">
+                <%= s.nilai %>
+              </div>
+              <div class="stat-sat">
+                <%= s.satuan || '' %>
+              </div>
+              <div class="stat-lbl">
+                <%= s.label %>
+              </div>
+            </div>
+            <% }); %>
+        </div>
+        <% } else { %>
+          <div
+            style="text-align:center; padding:40px 20px; color:#94a3b8; background:#fff; border-radius:14px; margin-top:28px; border:2px dashed #e2e8f0;">
+            <p style="font-size:28px; margin-bottom:8px;">&#128202;</p>
+            <p style="font-size:14px; font-weight:600; color:#64748b; margin-bottom:4px;">Data statistik belum tersedia
+            </p>
+            <p style="font-size:12px;">Isi melalui Supabase Table Editor pada tabel <code
+                style="background:#f1f5f9; padding:1px 6px; border-radius:4px;">statistik_desa</code></p>
+          </div>
+          <% } %>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════ LOKASI / MAPS ════════════════════════════ -->
+  <section class="home-section">
+    <div class="home-container">
+      <div style="text-align:center; margin-bottom:0;">
+        <p class="sec-eyebrow">Lokasi</p>
+        <h2 class="sec-title">Peta Desa Tinabite</h2>
+        <p class="sec-sub">Kec. Lantari Jaya, Kab. Bombana, Sulawesi Tenggara</p>
+      </div>
+
+      <% if (mapsUrl) { %>
+        <div class="maps-embed">
+          <iframe src="<%= mapsUrl %>" title="Peta Desa Tinabite" allowfullscreen="" loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <% } else { %>
+          <div
+            style="text-align:center; padding:40px 20px; color:#94a3b8; background:#f8fafc; border-radius:14px; margin-top:28px; border:2px dashed #e2e8f0;">
+            <p style="font-size:28px; margin-bottom:8px;">&#128506;</p>
+            <p style="font-size:14px; font-weight:600; color:#64748b; margin-bottom:4px;">Peta belum dikonfigurasi</p>
+            <p style="font-size:12px;">Isi kunci <code
+                style="background:#f1f5f9; padding:1px 6px; border-radius:4px;">maps</code> di tabel profil_desa dengan
+              URL embed Google Maps</p>
+          </div>
+          <% } %>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════ BERITA TERBARU ════════════════════════════ -->
+  <section class="home-section gray">
+    <div class="home-container">
+      <div class="sec-row">
+        <div>
+          <p class="sec-eyebrow">Informasi Terkini</p>
+          <h2 class="sec-title">Berita Terbaru</h2>
+        </div>
+        <a href="/berita" class="sec-all-link">Lihat Semua &rarr;</a>
+      </div>
+
+      <% if (beritaTerbaru.length===0) { %>
+        <div
+          style="text-align:center; padding:48px 20px; color:#94a3b8; background:#fff; border-radius:14px; margin-top:28px; border:2px dashed #e2e8f0;">
+          <p style="font-size:32px; margin-bottom:10px;">&#128240;</p>
+          <p style="font-size:14px; font-weight:600; color:#64748b;">Belum ada berita yang dipublikasikan.</p>
+        </div>
+        <% } else { %>
+          <div class="berita-grid">
+            <% beritaTerbaru.forEach(function(b) { %>
+              <a href="/berita/<%= b.slug %>" class="berita-card">
+                <% if (b.foto_url) { %>
+                  <img src="<%= b.foto_url %>" alt="<%= b.judul %>" class="berita-img" loading="lazy" />
+                  <% } else { %>
+                    <div class="berita-no-img">&#128240;</div>
+                    <% } %>
+                      <div class="berita-body">
+                        <span class="berita-kat">
+                          <%= b.kategori || 'Berita' %>
+                        </span>
+                        <h3 class="berita-judul">
+                          <%= b.judul %>
+                        </h3>
+                        <p class="berita-tgl">
+                          <%= formatTanggal(b.published_at) %>
+                        </p>
+                      </div>
+              </a>
+              <% }); %>
+          </div>
+          <% } %>
+    </div>
+  </section>
