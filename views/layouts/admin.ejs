@@ -1,249 +1,729 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%= typeof title !== 'undefined' ? title : 'Admin — Desa Tinabite' %></title>
+  <title>
+    <%= typeof title !=='undefined' ? title : 'Admin — Desa Tinabite' %>
+  </title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/style.css" />
   <style>
-    * { box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; margin: 0; background: #f1f5f9; }
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background: #f1f5f9;
+    }
 
     /* === SIDEBAR === */
     .admin-sidebar {
-      position: fixed; top: 0; left: 0; bottom: 0; width: 240px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 240px;
       background: #0f172a;
-      display: flex; flex-direction: column;
+      display: flex;
+      flex-direction: column;
       z-index: 100;
     }
+
     .sidebar-brand {
       padding: 24px 20px 20px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
-    .sidebar-brand-logo {
-      width: 36px; height: 36px; border-radius: 10px;
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 800; color: white; font-size: 16px; margin-bottom: 10px;
-    }
-    .sidebar-brand-name { color: white; font-weight: 700; font-size: 14px; line-height: 1.2; }
-    .sidebar-brand-sub { color: #64748b; font-size: 11px; margin-top: 2px; }
 
-    .sidebar-nav { flex: 1; padding: 16px 10px; overflow-y: auto; }
+    .sidebar-brand-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: white;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .sidebar-brand-name {
+      color: white;
+      font-weight: 700;
+      font-size: 14px;
+      line-height: 1.2;
+    }
+
+    .sidebar-brand-sub {
+      color: #64748b;
+      font-size: 11px;
+      margin-top: 2px;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 16px 10px;
+      overflow-y: auto;
+    }
+
     .sidebar-section-label {
-      color: #475569; font-size: 10px; font-weight: 600;
-      text-transform: uppercase; letter-spacing: 0.08em;
+      color: #475569;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
       padding: 8px 10px 4px;
     }
+
     .sidebar-link {
-      display: flex; align-items: center; gap: 10px;
-      padding: 9px 12px; border-radius: 8px;
-      color: #94a3b8; font-size: 13px; font-weight: 500;
-      text-decoration: none; transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      color: #94a3b8;
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.15s;
       margin-bottom: 2px;
     }
-    .sidebar-link:hover { background: rgba(255,255,255,0.06); color: #e2e8f0; }
-    .sidebar-link.active { background: rgba(34,197,94,0.15); color: #4ade80; }
-    .sidebar-link .icon { width: 18px; text-align: center; font-size: 15px; }
+
+    .sidebar-link:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #e2e8f0;
+    }
+
+    .sidebar-link.active {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+    }
+
+    .sidebar-link .icon {
+      width: 18px;
+      text-align: center;
+      font-size: 15px;
+    }
 
     .sidebar-footer {
-      padding: 16px; border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
     }
+
     .sidebar-user {
-      display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
     }
+
     .sidebar-user-avatar {
-      width: 32px; height: 32px; border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
       background: linear-gradient(135deg, #22c55e, #059669);
-      display: flex; align-items: center; justify-content: center;
-      color: white; font-weight: 700; font-size: 13px; flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 13px;
+      flex-shrink: 0;
     }
-    .sidebar-user-email { color: #94a3b8; font-size: 11px; truncate; word-break: break-all; }
+
+    .sidebar-user-email {
+      color: #94a3b8;
+      font-size: 11px;
+      truncate;
+      word-break: break-all;
+    }
+
     .sidebar-logout {
-      display: flex; align-items: center; justify-content: center; gap: 6px;
-      width: 100%; padding: 8px; border-radius: 8px;
-      background: rgba(239,68,68,0.1); border: none;
-      color: #f87171; font-size: 12px; font-weight: 500;
-      cursor: pointer; text-decoration: none; transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      padding: 8px;
+      border-radius: 8px;
+      background: rgba(239, 68, 68, 0.1);
+      border: none;
+      color: #f87171;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s;
     }
-    .sidebar-logout:hover { background: rgba(239,68,68,0.2); }
+
+    .sidebar-logout:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
 
     /* === MAIN CONTENT === */
     .admin-main {
       margin-left: 240px;
       min-height: 100vh;
-      display: flex; flex-direction: column;
+      display: flex;
+      flex-direction: column;
     }
-    .admin-topbar {
-      background: white; border-bottom: 1px solid #e2e8f0;
-      padding: 0 28px; height: 60px;
-      display: flex; align-items: center; justify-content: space-between;
-      position: sticky; top: 0; z-index: 50;
-    }
-    .admin-topbar-title { font-weight: 600; font-size: 15px; color: #1e293b; }
-    .admin-topbar-back { color: #64748b; font-size: 13px; text-decoration: none; }
-    .admin-topbar-back:hover { color: #22c55e; }
 
-    .admin-content { padding: 28px; flex: 1; }
+    .admin-topbar {
+      background: white;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 0 28px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .admin-topbar-title {
+      font-weight: 600;
+      font-size: 15px;
+      color: #1e293b;
+    }
+
+    .admin-topbar-back {
+      color: #64748b;
+      font-size: 13px;
+      text-decoration: none;
+    }
+
+    .admin-topbar-back:hover {
+      color: #22c55e;
+    }
+
+    .admin-content {
+      padding: 28px;
+      flex: 1;
+    }
 
     /* === CARDS === */
     .admin-card {
-      background: white; border-radius: 12px;
-      border: 1px solid #e2e8f0; padding: 24px;
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      padding: 24px;
       margin-bottom: 20px;
     }
+
     .admin-card-title {
-      font-size: 15px; font-weight: 600; color: #1e293b; margin: 0 0 16px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 0 0 16px;
     }
 
     /* === TABLES === */
-    .admin-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
     .admin-table th {
-      text-align: left; padding: 10px 14px;
-      background: #f8fafc; color: #64748b; font-weight: 600;
-      font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;
+      text-align: left;
+      padding: 10px 14px;
+      background: #f8fafc;
+      color: #64748b;
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
       border-bottom: 1px solid #e2e8f0;
     }
+
     .admin-table td {
-      padding: 12px 14px; border-bottom: 1px solid #f1f5f9;
-      color: #374151; vertical-align: middle;
+      padding: 12px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #374151;
+      vertical-align: middle;
     }
-    .admin-table tr:last-child td { border-bottom: none; }
-    .admin-table tr:hover td { background: #f8fafc; }
+
+    .admin-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .admin-table tr:hover td {
+      background: #f8fafc;
+    }
 
     /* === BADGES === */
     .badge {
-      display: inline-flex; align-items: center;
-      padding: 3px 10px; border-radius: 99px;
-      font-size: 11px; font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 600;
     }
-    .badge-green { background: #dcfce7; color: #16a34a; }
-    .badge-yellow { background: #fef9c3; color: #ca8a04; }
-    .badge-red { background: #fee2e2; color: #dc2626; }
-    .badge-blue { background: #dbeafe; color: #2563eb; }
-    .badge-gray { background: #f1f5f9; color: #64748b; }
+
+    .badge-green {
+      background: #dcfce7;
+      color: #16a34a;
+    }
+
+    .badge-yellow {
+      background: #fef9c3;
+      color: #ca8a04;
+    }
+
+    .badge-red {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .badge-blue {
+      background: #dbeafe;
+      color: #2563eb;
+    }
+
+    .badge-gray {
+      background: #f1f5f9;
+      color: #64748b;
+    }
 
     /* === BUTTONS === */
     .btn {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 8px 16px; border-radius: 8px; font-size: 13px;
-      font-weight: 500; cursor: pointer; border: none;
-      text-decoration: none; transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      transition: all 0.15s;
     }
-    .btn-primary { background: #16a34a; color: white; }
-    .btn-primary:hover { background: #15803d; }
-    .btn-secondary { background: #f1f5f9; color: #374151; border: 1px solid #e2e8f0; }
-    .btn-secondary:hover { background: #e2e8f0; }
-    .btn-danger { background: #fee2e2; color: #dc2626; }
-    .btn-danger:hover { background: #fecaca; }
-    .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+    .btn-primary {
+      background: #16a34a;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #15803d;
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #374151;
+      border: 1px solid #e2e8f0;
+    }
+
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+
+    .btn-danger {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .btn-danger:hover {
+      background: #fecaca;
+    }
+
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
 
     /* === FORMS === */
-    .form-group { margin-bottom: 16px; }
-    .form-label { display: block; font-size: 13px; font-weight: 500; color: #374151; margin-bottom: 6px; }
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 6px;
+    }
+
     .form-control {
-      width: 100%; padding: 9px 12px; border-radius: 8px;
-      border: 1px solid #d1d5db; font-size: 13px; font-family: inherit;
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 13px;
+      font-family: inherit;
       transition: border-color 0.15s, box-shadow 0.15s;
     }
+
     .form-control:focus {
-      outline: none; border-color: #22c55e;
-      box-shadow: 0 0 0 3px rgba(34,197,94,0.1);
+      outline: none;
+      border-color: #22c55e;
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
     }
-    textarea.form-control { resize: vertical; min-height: 100px; }
-    .form-hint { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-hint {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
 
     /* === IMAGE PREVIEW === */
     .img-preview {
-      width: 80px; height: 60px; object-fit: cover;
-      border-radius: 6px; border: 1px solid #e2e8f0;
+      width: 80px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
     }
 
     /* === ALERTS === */
     .alert {
-      padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 16px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 16px;
     }
-    .alert-success { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
-    .alert-error { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
-    .alert-info { background: #dbeafe; color: #2563eb; border: 1px solid #bfdbfe; }
+
+    .alert-success {
+      background: #dcfce7;
+      color: #16a34a;
+      border: 1px solid #bbf7d0;
+    }
+
+    .alert-error {
+      background: #fee2e2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+    }
+
+    .alert-info {
+      background: #dbeafe;
+      color: #2563eb;
+      border: 1px solid #bfdbfe;
+    }
 
     /* === STAT CARDS === */
-    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
-    .stat-card {
-      background: white; border-radius: 12px; border: 1px solid #e2e8f0;
-      padding: 20px; display: flex; flex-direction: column; gap: 8px;
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
     }
+
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
     .stat-card-icon {
-      width: 40px; height: 40px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 18px;
     }
-    .stat-card-value { font-size: 28px; font-weight: 700; color: #1e293b; }
-    .stat-card-label { font-size: 12px; color: #64748b; font-weight: 500; }
+
+    .stat-card-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .stat-card-label {
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    /* === HAMBURGER BUTTON (tersembunyi di desktop) === */
+    .sidebar-toggle-btn {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      cursor: pointer;
+      flex-shrink: 0;
+      font-size: 18px;
+      color: #374151;
+    }
+
+    /* === OVERLAY (mobile only) === */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 99;
+    }
+
+    .sidebar-overlay.aktif {
+      display: block;
+    }
+
+    /* ================================================================
+       RESPONSIVE — TABLET & MOBILE
+    ================================================================ */
+    @media (max-width: 768px) {
+
+      /* Sidebar: off-canvas, tersembunyi ke kiri */
+      .admin-sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+        z-index: 200;
+        width: 260px;
+      }
+
+      .admin-sidebar.sidebar-open {
+        transform: translateX(0);
+      }
+
+      /* Main: full width */
+      .admin-main {
+        margin-left: 0;
+      }
+
+      /* Topbar: tampilkan hamburger */
+      .admin-topbar {
+        padding: 0 16px;
+        gap: 12px;
+      }
+
+      .sidebar-toggle-btn {
+        display: flex;
+      }
+
+      /* Topbar title: lebih kecil agar tidak overflow */
+      .admin-topbar-title {
+        font-size: 14px;
+      }
+
+      .admin-topbar-back {
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      /* Content: padding lebih kecil */
+      .admin-content {
+        padding: 16px;
+      }
+
+      /* Stat grid: 2 kolom di tablet, 1 kolom di HP kecil */
+      .stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      /* Tables: scroll horizontal khusus tabel, bukan seluruh halaman */
+      .admin-table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .admin-table {
+        min-width: 500px;
+      }
+
+      /* Cards */
+      .admin-card {
+        padding: 16px;
+      }
+
+      /* Form grid: 1 kolom */
+      [style*="grid-template-columns:1fr 300px"],
+      [style*="grid-template-columns: 1fr 300px"] {
+        display: flex !important;
+        flex-direction: column !important;
+      }
+
+      /* Buttons: full-width di form bawah */
+      .admin-content .btn {
+        touch-action: manipulation;
+      }
+
+      /* Topbar: title bisa terpotong */
+      .admin-topbar-title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 55vw;
+      }
+    }
+
+    @media (max-width: 480px) {
+
+      /* Stat grid: 1 kolom di HP kecil */
+      .stat-grid {
+        grid-template-columns: 1fr;
+      }
+
+      /* Font sedikit lebih kecil */
+      .admin-table {
+        font-size: 12px;
+      }
+
+      .admin-table th {
+        font-size: 10px;
+        padding: 8px 10px;
+      }
+
+      .admin-table td {
+        padding: 10px 10px;
+      }
+
+      /* Sidebar lebih lebar agar menu mudah disentuh */
+      .admin-sidebar {
+        width: min(280px, 85vw);
+      }
+
+      /* Sidebar link lebih tinggi untuk touch */
+      .sidebar-link {
+        padding: 11px 12px;
+        font-size: 14px;
+      }
+    }
   </style>
 </head>
+
 <body>
 
-<!-- Sidebar -->
-<aside class="admin-sidebar">
-  <div class="sidebar-brand">
-    <div class="sidebar-brand-logo">T</div>
-    <div class="sidebar-brand-name">Panel Admin</div>
-    <div class="sidebar-brand-sub">Desa Tinabite</div>
-  </div>
+  <!-- Overlay mobile (klik untuk tutup sidebar) -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <nav class="sidebar-nav">
-    <div class="sidebar-section-label">Menu Utama</div>
-    <a href="/admin" class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'dashboard') ? 'active' : '' %>">
-      <span class="icon">📊</span> Dashboard
-    </a>
-
-    <div class="sidebar-section-label" style="margin-top:8px">Konten</div>
-    <a href="/admin/berita" class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'berita') ? 'active' : '' %>">
-      <span class="icon">📰</span> Berita & Pengumuman
-    </a>
-    <a href="/admin/galeri" class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'galeri') ? 'active' : '' %>">
-      <span class="icon">🖼️</span> Galeri Foto
-    </a>
-    <a href="/admin/pemerintahan" class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'pemerintahan') ? 'active' : '' %>">
-      <span class="icon">🏛️</span> Pemerintahan Desa
-    </a>
-
-    <div class="sidebar-section-label" style="margin-top:8px">Lainnya</div>
-    <a href="/admin/kontak" class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'kontak') ? 'active' : '' %>">
-      <span class="icon">✉️</span> Pesan Masuk
-    </a>
-    <a href="/" target="_blank" class="sidebar-link">
-      <span class="icon">🌐</span> Lihat Website
-    </a>
-  </nav>
-
-  <div class="sidebar-footer">
-    <div class="sidebar-user">
-      <div class="sidebar-user-avatar">
-        <%= (typeof adminEmail !== 'undefined' && adminEmail) ? adminEmail[0].toUpperCase() : 'A' %>
-      </div>
-      <div class="sidebar-user-email"><%= typeof adminEmail !== 'undefined' ? adminEmail : 'Admin' %></div>
+  <!-- Sidebar -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-logo">T</div>
+      <div class="sidebar-brand-name">Panel Admin</div>
+      <div class="sidebar-brand-sub">Desa Tinabite</div>
     </div>
-    <form action="/admin/logout" method="POST">
-      <button type="submit" class="sidebar-logout">🚪 Keluar</button>
-    </form>
-  </div>
-</aside>
 
-<!-- Main Content -->
-<main class="admin-main">
-  <div class="admin-topbar">
-    <span class="admin-topbar-title"><%= typeof pageTitle !== 'undefined' ? pageTitle : (typeof title !== 'undefined' ? title : 'Admin') %></span>
-    <a href="/" target="_blank" class="admin-topbar-back">← Lihat Website</a>
-  </div>
-  <div class="admin-content">
-    <%- body %>
-  </div>
-</main>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Menu Utama</div>
+      <a href="/admin"
+        class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'dashboard') ? 'active' : '' %>">
+        <span class="icon">📊</span> Dashboard
+      </a>
+
+      <div class="sidebar-section-label" style="margin-top:8px">Konten</div>
+      <a href="/admin/berita"
+        class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'berita') ? 'active' : '' %>">
+        <span class="icon">📰</span> Berita & Pengumuman
+      </a>
+      <a href="/admin/galeri"
+        class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'galeri') ? 'active' : '' %>">
+        <span class="icon">🖼️</span> Galeri Foto
+      </a>
+      <a href="/admin/pemerintahan"
+        class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'pemerintahan') ? 'active' : '' %>">
+        <span class="icon">🏛️</span> Pemerintahan Desa
+      </a>
+
+      <div class="sidebar-section-label" style="margin-top:8px">Lainnya</div>
+      <a href="/admin/kontak"
+        class="sidebar-link <%= (typeof activePage !== 'undefined' && activePage === 'kontak') ? 'active' : '' %>">
+        <span class="icon">✉️</span> Pesan Masuk
+      </a>
+      <a href="/" target="_blank" class="sidebar-link">
+        <span class="icon">🌐</span> Lihat Website
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar">
+          <%= (typeof adminEmail !=='undefined' && adminEmail) ? adminEmail[0].toUpperCase() : 'A' %>
+        </div>
+        <div class="sidebar-user-email">
+          <%= typeof adminEmail !=='undefined' ? adminEmail : 'Admin' %>
+        </div>
+      </div>
+      <form action="/admin/logout" method="POST">
+        <button type="submit" class="sidebar-logout">🚪 Keluar</button>
+      </form>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Buka menu" type="button">&#9776;</button>
+        <span class="admin-topbar-title">
+          <%= typeof pageTitle !=='undefined' ? pageTitle : (typeof title !=='undefined' ? title : 'Admin' ) %>
+        </span>
+      </div>
+      <a href="/" target="_blank" class="admin-topbar-back">&#8592; Lihat Website</a>
+    </div>
+    <div class="admin-content">
+      <%- body %>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var sidebar = document.getElementById('adminSidebar');
+      var overlay = document.getElementById('sidebarOverlay');
+      var toggleBtn = document.getElementById('sidebarToggle');
+
+      function bukaSidebar() {
+        sidebar.classList.add('sidebar-open');
+        overlay.classList.add('aktif');
+        document.body.style.overflow = 'hidden';
+      }
+      function tutupSidebar() {
+        sidebar.classList.remove('sidebar-open');
+        overlay.classList.remove('aktif');
+        document.body.style.overflow = '';
+      }
+
+      if (toggleBtn) toggleBtn.addEventListener('click', bukaSidebar);
+      if (overlay) overlay.addEventListener('click', tutupSidebar);
+
+      // Tutup sidebar saat menu diklik (mobile only)
+      if (sidebar) {
+        sidebar.querySelectorAll('.sidebar-link').forEach(function (link) {
+          link.addEventListener('click', function () {
+            if (window.innerWidth <= 768) tutupSidebar();
+          });
+        });
+        // Tutup juga saat tombol logout diklik
+        var logoutBtn = sidebar.querySelector('.sidebar-logout');
+        if (logoutBtn) logoutBtn.addEventListener('click', tutupSidebar);
+      }
+
+      // Tutup sidebar saat resize ke desktop
+      window.addEventListener('resize', function () {
+        if (window.innerWidth > 768) tutupSidebar();
+      });
+    }());
+  </script>
 
 </body>
+
 </html>
