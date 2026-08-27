@@ -51,14 +51,24 @@ async function processLogin(req, res) {
     }
 
     // Simpan info admin ke session
-    req.session.admin = {
-      id: data.user.id,
-      email: data.user.email,
-    };
+    // Regenerate session ID untuk mencegah session fixation dan
+    // memastikan session baru selalu dibuat saat login
+    req.session.regenerate((regenerateErr) => {
+      if (regenerateErr) {
+        console.error("[Auth] Session regenerate error:", regenerateErr.message);
+        req.session.flashError = "Terjadi kesalahan server. Coba lagi.";
+        return res.redirect("/admin/login");
+      }
 
-    const returnTo = req.session.returnTo || "/admin";
-    delete req.session.returnTo;
-    res.redirect(returnTo);
+      req.session.admin = {
+        id: data.user.id,
+        email: data.user.email,
+      };
+
+      const returnTo = req.session.returnTo || "/admin";
+      delete req.session.returnTo;
+      res.redirect(returnTo);
+    });
   } catch (err) {
     console.error("[Auth] Login error:", err.message);
     req.session.flashError = "Terjadi kesalahan server. Coba lagi.";

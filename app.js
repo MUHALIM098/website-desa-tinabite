@@ -172,6 +172,21 @@ app.use(async (req, res, next) => {
 });
 
 // ============================================================
+// Inject adminEmail dari session ke res.locals — SEMUA halaman admin
+// Sehingga semua controller admin tidak perlu mengirimkan adminEmail
+// secara manual. Layout admin.ejs membaca dari res.locals.adminEmail.
+// ============================================================
+app.use("/admin", (req, res, next) => {
+  // Inject adminEmail dari session ke locals agar tersedia di semua view admin
+  // Jika controller sudah mengirimkan adminEmail, nilai dari controller yang dipakai
+  // (res.locals dioverride oleh data yang dikirim ke res.render)
+  if (req.session && req.session.admin && req.session.admin.email) {
+    res.locals.adminEmail = req.session.admin.email;
+  }
+  next();
+});
+
+// ============================================================
 // Routes
 // ============================================================
 app.use("/", publicRoutes);

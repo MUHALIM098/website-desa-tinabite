@@ -1,298 +1,182 @@
 <%# views/admin/kontak/index.ejs — Pesan Masuk %>
 
-  <% if (flash) { %>
-    <div class="alert alert-<%= flash.type === 'success' ? 'success' : 'error' %>">
-      <%= flash.msg %>
+<% if (flash) { %>
+<div class="alert alert-<%= flash.type === 'success' ? 'success' : 'error' %>"><%= flash.msg %></div>
+<% } %>
+
+<div class="admin-card">
+  <p class="admin-card-title">Pesan dari Pengunjung</p>
+
+  <% if (daftarPesan.length === 0) { %>
+  <p style="text-align:center; color:#94a3b8; padding:32px 0; font-size:13px;">Belum ada pesan masuk.</p>
+  <% } else { %>
+  <div style="overflow-x:auto;">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th style="width:70px;">Status</th>
+          <th>Nama</th>
+          <th>Email</th>
+          <th>Subjek</th>
+          <th>Pesan</th>
+          <th style="width:110px;">Tanggal</th>
+          <th style="width:160px;">Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% daftarPesan.forEach(function(p) { %>
+        <tr style="<%= !p.dibaca ? 'background:#fefce8;' : '' %>">
+
+          <td>
+            <span class="badge <%= p.dibaca ? 'badge-gray' : 'badge-yellow' %>">
+              <%= p.dibaca ? 'Dibaca' : 'Baru' %>
+            </span>
+          </td>
+
+          <td style="font-weight:<%= !p.dibaca ? '600' : '400' %>; color:#1e293b; font-size:13px;">
+            <%= p.nama %>
+          </td>
+
+          <td style="color:#64748b; font-size:12px;"><%= p.email || '—' %></td>
+
+          <td style="font-size:13px; max-width:160px;"><%= p.subjek || '—' %></td>
+
+          <td style="font-size:12px; color:#374151; max-width:220px;">
+            <div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:200px;"><%= p.pesan %></div>
+            <button type="button" class="btn-baca-pesan" data-id="<%= p.id %>" style="margin-top:5px; background:none; border:none; padding:0; font-size:12px; color:#2563eb; cursor:pointer; font-weight:500; text-decoration:underline;">Baca Selengkapnya &rarr;</button>
+          </td>
+
+          <td style="color:#64748b; font-size:12px; white-space:nowrap;">
+            <%= new Date(p.created_at).toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'numeric'}) %>
+          </td>
+
+          <td>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+              <% if (!p.dibaca) { %>
+              <form action="/admin/kontak/<%= p.id %>/baca" method="POST" style="display:inline;">
+                <button type="submit" title="Tandai sudah dibaca" style="display:inline-flex; align-items:center; gap:4px; padding:5px 11px; border-radius:7px; border:1px solid #d1fae5; background:#f0fdf4; color:#16a34a; font-size:11px; font-weight:600; cursor:pointer; white-space:nowrap;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                  Tandai Dibaca
+                </button>
+              </form>
+              <% } %>
+
+              <form action="/admin/kontak/<%= p.id %>/hapus" method="POST" style="display:inline;" class="form-hapus-pesan" data-nama="<%= (p.nama || 'pengunjung').replace(/"/g, '&quot;') %>">
+                <button type="submit" title="Hapus pesan" style="display:inline-flex; align-items:center; gap:4px; padding:5px 11px; border-radius:7px; border:1px solid #fecaca; background:#fff1f2; color:#dc2626; font-size:11px; font-weight:600; cursor:pointer; white-space:nowrap;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                  Hapus
+                </button>
+              </form>
+            </div>
+          </td>
+
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+  <% } %>
+</div>
+
+<% if (daftarPesan.length > 0) { %>
+
+<!-- Modal Detail Pesan -->
+<div id="pesan-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:9000; align-items:center; justify-content:center; padding:16px;">
+  <div id="pesan-modal" style="background:#fff; border-radius:14px; width:100%; max-width:560px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.25); display:flex; flex-direction:column;">
+
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:18px 22px 14px; border-bottom:1px solid #f1f5f9; position:sticky; top:0; background:#fff; z-index:1;">
+      <h3 style="font-size:15px; font-weight:700; color:#1e293b; margin:0;">Detail Pesan</h3>
+      <button id="pesan-modal-close" type="button" aria-label="Tutup" style="width:30px; height:30px; border-radius:50%; border:none; background:#f1f5f9; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; color:#64748b; flex-shrink:0;">&#x2715;</button>
     </div>
-    <% } %>
 
-      <div class="admin-card">
-        <p class="admin-card-title">Pesan dari Pengunjung</p>
+    <div id="pesan-modal-body" style="padding:20px 22px 24px;"></div>
 
-        <% if (daftarPesan.length===0) { %>
-          <p style="text-align:center; color:#94a3b8; padding:32px 0; font-size:13px;">Belum ada pesan masuk.</p>
-          <% } else { %>
-            <div style="overflow-x:auto;">
-              <table class="admin-table">
-                <thead>
-                  <tr>
-                    <th style="width:70px;">Status</th>
-                    <th>Nama</th>
-                    <th>Email</th>
-                    <th>Subjek</th>
-                    <th>Pesan</th>
-                    <th style="width:110px;">Tanggal</th>
-                    <th style="width:160px;">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% daftarPesan.forEach(function(p) { %>
-                    <tr style="<%= !p.dibaca ? 'background:#fefce8;' : '' %>">
+    <div style="padding:14px 22px 18px; border-top:1px solid #f1f5f9; display:flex; justify-content:flex-end; position:sticky; bottom:0; background:#fff;">
+      <button id="pesan-modal-close-footer" type="button" style="padding:8px 20px; border-radius:8px; border:1px solid #e2e8f0; background:#f8fafc; color:#374151; font-size:13px; font-weight:500; cursor:pointer;">Tutup</button>
+    </div>
 
-                      <!-- Status -->
-                      <td>
-                        <span class="badge <%= p.dibaca ? 'badge-gray' : 'badge-yellow' %>">
-                          <%= p.dibaca ? 'Dibaca' : 'Baru' %>
-                        </span>
-                      </td>
+  </div>
+</div>
 
-                      <!-- Nama -->
-                      <td style="font-weight:<%= !p.dibaca ? '600' : '400' %>; color:#1e293b; font-size:13px;">
-                        <%= p.nama %>
-                      </td>
+<script>
+(function () {
+  var PESAN_DATA = <%- JSON.stringify(daftarPesan) %>;
+  var peta = {};
+  PESAN_DATA.forEach(function (p) { peta[p.id] = p; });
 
-                      <!-- Email -->
-                      <td style="color:#64748b; font-size:12px;">
-                        <%= p.email || '—' %>
-                      </td>
+  var overlay  = document.getElementById('pesan-overlay');
+  var body     = document.getElementById('pesan-modal-body');
+  var btnClose = document.getElementById('pesan-modal-close');
+  var btnClose2= document.getElementById('pesan-modal-close-footer');
 
-                      <!-- Subjek -->
-                      <td style="font-size:13px; max-width:160px;">
-                        <%= p.subjek || '—' %>
-                      </td>
+  function formatTgl(iso) {
+    if (!iso) return '—';
+    try { return new Date(iso).toLocaleDateString('id-ID', {weekday:'long', day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit'}); }
+    catch (e) { return iso; }
+  }
 
-                      <!-- Ringkasan pesan -->
-                      <td style="font-size:12px; color:#374151; max-width:220px;">
-                        <div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:200px;">
-                          <%= p.pesan %>
-                        </div>
-                        <button type="button" class="btn-baca-pesan" data-id="<%= p.id %>"
-                          style="margin-top:5px; background:none; border:none; padding:0; font-size:12px; color:#2563eb; cursor:pointer; font-weight:500; text-decoration:underline;">Baca
-                          Selengkapnya &rarr;</button>
-                      </td>
+  function esc(str) {
+    if (!str) return '—';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
 
-                      <!-- Tanggal -->
-                      <td style="color:#64748b; font-size:12px; white-space:nowrap;">
-                        <%= new Date(p.created_at).toLocaleDateString('id-ID', {day:'2-digit', month:'short',
-                          year:'numeric'}) %>
-                      </td>
+  function baris(label, nilai, isBlok) {
+    var val = esc(nilai) || '—';
+    if (isBlok) {
+      return '<div style="margin-bottom:16px;"><p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;margin:0 0 6px;">' + label + '</p>' +
+        '<div style="font-size:13px;color:#374151;line-height:1.7;white-space:pre-wrap;background:#f8fafc;border-radius:8px;padding:12px 14px;border:1px solid #f1f5f9;">' + val + '</div></div>';
+    }
+    return '<div style="display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid #f8fafc;">' +
+      '<span style="font-size:12px;color:#94a3b8;min-width:70px;flex-shrink:0;">' + label + '</span>' +
+      '<span style="font-size:13px;color:#1e293b;font-weight:500;word-break:break-all;">' + val + '</span></div>';
+  }
 
-                      <!-- Aksi -->
-                      <td>
-                        <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+  function bukaPesan(id) {
+    var p = peta[id];
+    if (!p) return;
+    var statusHtml = p.dibaca
+      ? '<span style="background:#f1f5f9;color:#64748b;font-size:11px;font-weight:600;padding:2px 10px;border-radius:99px;">Sudah Dibaca</span>'
+      : '<span style="background:#fef9c3;color:#ca8a04;font-size:11px;font-weight:600;padding:2px 10px;border-radius:99px;">Belum Dibaca</span>';
+    body.innerHTML =
+      baris('Nama', p.nama) +
+      baris('Email', p.email) +
+      baris('Subjek', p.subjek) +
+      baris('Tanggal', formatTgl(p.created_at)) +
+      '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f8fafc;">' +
+        '<span style="font-size:12px;color:#94a3b8;min-width:70px;flex-shrink:0;">Status</span>' + statusHtml +
+      '</div>' +
+      '<div style="margin-top:16px;">' + baris('Isi Pesan', p.pesan, true) + '</div>';
+    overlay.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    setTimeout(function () { btnClose.focus(); }, 200);
+  }
 
-                          <!-- Tombol Baca Selengkapnya (jika belum dibaca, tandai sekaligus) -->
-                          <% if (!p.dibaca) { %>
-                            <form action="/admin/kontak/<%= p.id %>/baca" method="POST" style="display:inline;">
-                              <button type="submit" id="btn-baca-<%= p.id %>" title="Tandai sudah dibaca" style="display:inline-flex; align-items:center; gap:4px;
-                                     padding:5px 11px; border-radius:7px; border:1px solid #d1fae5;
-                                     background:#f0fdf4; color:#16a34a; font-size:11px;
-                                     font-weight:600; cursor:pointer; white-space:nowrap;
-                                     transition:background .15s;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none"
-                                  viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                                Tandai Dibaca
-                              </button>
-                            </form>
-                            <% } %>
+  function tutupPesan() {
+    overlay.style.display = 'none';
+    document.body.style.overflow = '';
+  }
 
-                              <!-- Tombol Hapus -->
-                              <form action="/admin/kontak/<%= p.id %>/hapus" method="POST" style="display:inline;"
-                                id="form-hapus-<%= p.id %>">
-                                <button type="button" id="btn-hapus-pesan-<%= p.id %>"
-                                  onclick="konfirmasiHapus(this)" data-id="<%= p.id %>" data-nama="<%= (p.nama || '').replace(/"/g, '&quot;') %>"
-                                  title="Hapus pesan" style="display:inline-flex; align-items:center; gap:4px;
-                                     padding:5px 11px; border-radius:7px; border:1px solid #fecaca;
-                                     background:#fff1f2; color:#dc2626; font-size:11px;
-                                     font-weight:600; cursor:pointer; white-space:nowrap;
-                                     transition:background .15s;">
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0
-                                         01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0
-                                         00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                  </svg>
-                                  Hapus
-                                </button>
-                              </form>
+  document.addEventListener('click', function (e) {
+    if (e.target.classList.contains('btn-baca-pesan')) bukaPesan(e.target.getAttribute('data-id'));
+  });
 
-                        </div>
-                      </td>
+  btnClose.addEventListener('click', tutupPesan);
+  btnClose2.addEventListener('click', tutupPesan);
+  overlay.addEventListener('click', function (e) { if (e.target === overlay) tutupPesan(); });
+  document.addEventListener('keydown', function (e) { if ((e.key === 'Escape' || e.keyCode === 27) && overlay.style.display !== 'none') tutupPesan(); });
 
-                    </tr>
-                    <% }); %>
-                </tbody>
-              </table>
-            </div>
-            <% } %>
-      </div>
+  document.querySelectorAll('.form-hapus-pesan').forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var nama = form.getAttribute('data-nama') || 'pengunjung';
+      if (window.confirm('Hapus pesan dari "' + nama + '"?\n\nData yang dihapus tidak dapat dikembalikan.')) form.submit();
+    });
+  });
 
-      <%# ── Modal Detail Pesan ── %>
-        <%# Data pesan dikirim ke JavaScript via JSON aman di variable, bukan di atribut HTML langsung %>
-          <% if (daftarPesan.length> 0) { %>
+  document.querySelectorAll('.alert').forEach(function (el) {
+    setTimeout(function () { el.style.transition='opacity 0.4s'; el.style.opacity='0'; setTimeout(function(){el.remove();},400); }, 4000);
+  });
+}());
+</script>
 
-            <!-- Overlay modal -->
-            <div id="pesan-overlay" style="
-  display:none; position:fixed; inset:0;
-  background:rgba(0,0,0,0.55); z-index:9000;
-  align-items:center; justify-content:center; padding:16px;
-">
-              <div id="pesan-modal" style="
-    background:#fff; border-radius:14px;
-    width:100%; max-width:560px; max-height:90vh;
-    overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.25);
-    display:flex; flex-direction:column;
-  ">
-
-                <!-- Header modal -->
-                <div style="
-      display:flex; align-items:center; justify-content:space-between;
-      padding:18px 22px 14px; border-bottom:1px solid #f1f5f9;
-      position:sticky; top:0; background:#fff; z-index:1;
-    ">
-                  <h3 style="font-size:15px; font-weight:700; color:#1e293b; margin:0;">Detail Pesan</h3>
-                  <button id="pesan-modal-close" type="button" aria-label="Tutup" style="
-        width:30px; height:30px; border-radius:50%; border:none;
-        background:#f1f5f9; cursor:pointer; font-size:16px;
-        display:flex; align-items:center; justify-content:center; color:#64748b;
-        flex-shrink:0;
-      ">&#x2715;</button>
-                </div>
-
-                <!-- Body modal -->
-                <div id="pesan-modal-body" style="padding:20px 22px 24px;">
-                  <!-- diisi oleh JavaScript -->
-                </div>
-
-                <!-- Footer modal -->
-                <div style="
-      padding:14px 22px 18px; border-top:1px solid #f1f5f9;
-      display:flex; justify-content:flex-end;
-      position:sticky; bottom:0; background:#fff;
-    ">
-                  <button id="pesan-modal-close-footer" type="button" style="
-        padding:8px 20px; border-radius:8px; border:1px solid #e2e8f0;
-        background:#f8fafc; color:#374151; font-size:13px;
-        font-weight:500; cursor:pointer;
-      ">Tutup</button>
-                </div>
-
-              </div>
-            </div>
-
-            <script>
-              (function () {
-                /* ── Data semua pesan dari server ── */
-                var PESAN_DATA = <% - JSON.stringify(daftarPesan) %>;
-
-                /* ── Buat lookup map id → pesan ── */
-                var peta = {};
-                PESAN_DATA.forEach(function (p) { peta[p.id] = p; });
-
-                var overlay = document.getElementById('pesan-overlay');
-                var modal = document.getElementById('pesan-modal');
-                var body = document.getElementById('pesan-modal-body');
-                var btnClose = document.getElementById('pesan-modal-close');
-                var btnClose2 = document.getElementById('pesan-modal-close-footer');
-
-                /* ── Format tanggal ── */
-                function formatTgl(iso) {
-                  if (!iso) return '—';
-                  try {
-                    return new Date(iso).toLocaleDateString('id-ID', {
-                      weekday: 'long', day: '2-digit', month: 'long', year: 'numeric',
-                      hour: '2-digit', minute: '2-digit'
-                    });
-                  } catch (e) { return iso; }
-                }
-
-                /* ── Escape HTML untuk mencegah XSS ── */
-                function esc(str) {
-                  if (!str) return '—';
-                  return String(str)
-                    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-                }
-
-                /* ── Buat satu baris info ── */
-                function baris(label, nilai, isBlok) {
-                  var val = esc(nilai) || '—';
-                  if (isBlok) {
-                    return '<div style="margin-bottom:16px;">' +
-                      '<p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;margin:0 0 6px;">' + label + '</p>' +
-                      '<div style="font-size:13px;color:#374151;line-height:1.7;white-space:pre-wrap;background:#f8fafc;border-radius:8px;padding:12px 14px;border:1px solid #f1f5f9;">' + val + '</div>' +
-                      '</div>';
-                  }
-                  return '<div style="display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid #f8fafc;">' +
-                    '<span style="font-size:12px;color:#94a3b8;min-width:70px;flex-shrink:0;">' + label + '</span>' +
-                    '<span style="font-size:13px;color:#1e293b;font-weight:500;word-break:break-all;">' + val + '</span>' +
-                    '</div>';
-                }
-
-                /* ── Buka modal ── */
-                function bukaPesan(id) {
-                  var p = peta[id];
-                  if (!p) return;
-
-                  var statusHtml = p.dibaca
-                    ? '<span style="background:#f1f5f9;color:#64748b;font-size:11px;font-weight:600;padding:2px 10px;border-radius:99px;">Sudah Dibaca</span>'
-                    : '<span style="background:#fef9c3;color:#ca8a04;font-size:11px;font-weight:600;padding:2px 10px;border-radius:99px;">Belum Dibaca</span>';
-
-                  body.innerHTML =
-                    baris('Nama', p.nama) +
-                    baris('Email', p.email) +
-                    baris('Subjek', p.subjek) +
-                    baris('Tanggal', formatTgl(p.created_at)) +
-                    '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f8fafc;">' +
-                    '<span style="font-size:12px;color:#94a3b8;min-width:70px;flex-shrink:0;">Status</span>' +
-                    statusHtml +
-                    '</div>' +
-                    '<div style="margin-top:16px;">' + baris('Isi Pesan', p.pesan, true) + '</div>';
-
-                  overlay.style.display = 'flex';
-                  document.body.style.overflow = 'hidden';
-                  setTimeout(function () { btnClose.focus(); }, 200);
-                }
-
-                /* ── Tutup modal ── */
-                function tutupPesan() {
-                  overlay.style.display = 'none';
-                  document.body.style.overflow = '';
-                }
-
-                /* ── Event: klik tombol "Baca Selengkapnya" ── */
-                document.addEventListener('click', function (e) {
-                  if (e.target.classList.contains('btn-baca-pesan')) {
-                    bukaPesan(e.target.getAttribute('data-id'));
-                  }
-                });
-
-                /* ── Event: tombol tutup ── */
-                btnClose.addEventListener('click', tutupPesan);
-                btnClose2.addEventListener('click', tutupPesan);
-
-                /* ── Event: klik overlay (luar modal) ── */
-                overlay.addEventListener('click', function (e) {
-                  if (e.target === overlay) tutupPesan();
-                });
-
-                /* ── Event: tombol Escape ── */
-                document.addEventListener('keydown', function (e) {
-                  if ((e.key === 'Escape' || e.keyCode === 27) && overlay.style.display !== 'none') {
-                    tutupPesan();
-                  }
-                });
-
-                /* ── Auto-dismiss flash alert ── */
-                document.querySelectorAll('.alert').forEach(function (el) {
-                  setTimeout(function () {
-                    el.style.transition = 'opacity 0.4s';
-                    el.style.opacity = '0';
-                    setTimeout(function () { el.remove(); }, 400);
-                  }, 4000);
-                });
-
-                /* ── Konfirmasi hapus pesan ── */
-                window.konfirmasiHapus = function (btn) {
-                  var id   = btn.getAttribute('data-id');
-                  var nama = btn.getAttribute('data-nama') || 'pengunjung';
-                  var ok = window.confirm('Hapus pesan dari "' + nama + '"?\n\nData yang dihapus tidak dapat dikembalikan.');
-                  if (ok) { document.getElementById('form-hapus-' + id).submit(); }
-                };
-
-              }());
-            </script>
-
-            <% } %>
+<% } %>
