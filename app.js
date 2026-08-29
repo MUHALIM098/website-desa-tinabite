@@ -140,6 +140,10 @@ let _bgUrlCache = null;
 let _bgUrlCacheAt = 0;
 const BG_CACHE_TTL = 5 * 60 * 1000; // 5 menit
 
+// Cache logo — diambil bersamaan dengan background dalam satu query
+let _logoUrlCache = null;
+let _logoUrlCacheAt = 0;
+
 app.use(async (req, res, next) => {
   // Hanya untuk halaman publik (bukan /admin, /css, /js, /images)
   if (
@@ -162,11 +166,20 @@ app.use(async (req, res, next) => {
         : "";
       _bgUrlCache = raw || "/images/desa-tinabite-bg.jpg";
       _bgUrlCacheAt = now;
+
+      // Ambil logo sekaligus — profil sudah di-fetch di atas
+      const logoRaw = profil.logo_website && profil.logo_website.konten
+        ? profil.logo_website.konten.trim()
+        : "";
+      _logoUrlCache = logoRaw || "";
+      _logoUrlCacheAt = now;
     }
     res.locals.backgroundUrl = _bgUrlCache;
+    res.locals.logoUrl = _logoUrlCache;
   } catch (e) {
     // Jika gagal ambil dari DB, gunakan fallback — jangan sampai error
     res.locals.backgroundUrl = "/images/desa-tinabite-bg.jpg";
+    res.locals.logoUrl = "";
   }
   next();
 });
@@ -178,10 +191,13 @@ app.use(async (req, res, next) => {
 // ============================================================
 app.use("/admin", (req, res, next) => {
   // Inject adminEmail dari session ke locals agar tersedia di semua view admin
-  // Jika controller sudah mengirimkan adminEmail, nilai dari controller yang dipakai
-  // (res.locals dioverride oleh data yang dikirim ke res.render)
   if (req.session && req.session.admin && req.session.admin.email) {
     res.locals.adminEmail = req.session.admin.email;
+  }
+  // Inject logoUrl ke halaman admin dari cache (sudah diisi oleh middleware publik)
+  // Jika belum ada di cache, ambil dari _logoUrlCache yang sudah diisi
+  if (!res.locals.logoUrl) {
+    res.locals.logoUrl = _logoUrlCache || "";
   }
   next();
 });

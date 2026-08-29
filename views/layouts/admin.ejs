@@ -618,9 +618,14 @@
   <!-- Sidebar -->
   <aside class="admin-sidebar" id="adminSidebar">
     <div class="sidebar-brand">
-      <div class="sidebar-brand-logo">T</div>
-      <div class="sidebar-brand-name">Panel Admin</div>
-      <div class="sidebar-brand-sub">Desa Tinabite</div>
+      <% if (typeof logoUrl !=='undefined' && logoUrl) { %>
+        <img src="<%= logoUrl %>" alt="Logo Desa Tinabite"
+          style="width:36px; height:36px; border-radius:10px; object-fit:cover; margin-bottom:10px; display:block;" />
+        <% } else { %>
+          <div class="sidebar-brand-logo">T</div>
+          <% } %>
+            <div class="sidebar-brand-name">Panel Admin</div>
+            <div class="sidebar-brand-sub">Desa Tinabite</div>
     </div>
 
     <nav class="sidebar-nav">

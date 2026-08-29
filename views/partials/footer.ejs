@@ -1,4 +1,4 @@
-<!-- views/partials/footer.ejs — Footer website -->
+﻿<!-- views/partials/footer.ejs — Footer website -->
 <footer class="bg-gray-800 text-gray-300 mt-auto">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -6,8 +6,15 @@
       <!-- Kolom 1: Identitas Desa -->
       <div>
         <div class="flex items-center gap-3 mb-3">
-          <div class="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white text-sm font-bold">T</div>
-          <span class="font-bold text-white text-lg">Desa Tinabite</span>
+          <% if (typeof logoUrl !=='undefined' && logoUrl) { %>
+            <img src="<%= logoUrl %>" alt="Logo Desa Tinabite"
+              style="width:32px; height:32px; border-radius:50%; object-fit:cover; flex-shrink:0;" />
+            <% } else { %>
+              <div
+                class="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+                T</div>
+              <% } %>
+                <span class="font-bold text-white text-lg">Desa Tinabite</span>
         </div>
         <p class="text-sm leading-relaxed text-gray-400">
           Kecamatan Lantari Jaya<br />
@@ -41,7 +48,8 @@
 
     </div>
 
-    <div class="border-t border-gray-700 mt-8 pt-6 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-gray-500">
+    <div
+      class="border-t border-gray-700 mt-8 pt-6 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-gray-500">
       <p>&copy; <%= new Date().getFullYear() %> Desa Tinabite. Hak Cipta Dilindungi.</p>
       <p>Dibuat dengan ❤️ oleh Tim KKN Desa Tinabite</p>
     </div>
